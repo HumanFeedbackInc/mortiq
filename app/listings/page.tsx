@@ -19,10 +19,10 @@ interface Listing {
   interestRate: number;
   estimatedFairMarketValue: number;
   propertyType: string;
-  summary: string;
+  summary: string | null;
   imgs: string;
   privateDocs: string;
-  mortgageType: string;
+  mortgageType: number;
   priorEncumbrances: string;
   term: string;
   region: string;

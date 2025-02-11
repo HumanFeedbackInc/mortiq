@@ -62,7 +62,7 @@ export default async function Dashboard() {
   const listingsWithImages: ListingWithImages[] = [];
   for (const l of listings) {
     const listingWithImage: ListingWithImages = {
-      ...(l as Omit<ListingWithImages, "imgUrls">),
+      ...(l as unknown as Omit<ListingWithImages, "imgUrls">),
       imgUrls: [],
     };
     if (!listingWithImage.imgUrls) {

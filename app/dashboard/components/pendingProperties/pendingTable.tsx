@@ -22,7 +22,7 @@ interface Listing {
   //   summary: string;
   imgs: string;
   privateDocs: string;
-  mortgageType: string;
+  mortgageType: number;
   priorEncumbrances: string;
   term: string;
   region: string;

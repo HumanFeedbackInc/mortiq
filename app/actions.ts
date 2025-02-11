@@ -572,7 +572,12 @@ export const getListings = async () => {
     .innerJoin(property, eq(listings.propertyId, property.propertyId))
     .execute();
 
-  return res;
+  //iterate through each of the listings and change morgageType to a number
+  const updatedListings = res.map((listing) => ({
+    ...listing,
+    mortgageType: Number(listing.mortgageType),
+  }));
+  return updatedListings;
 };
 
 export const approveListing = async (listingId: string) => {
