@@ -14,7 +14,7 @@ type Property = {
   propertyType: string;
   imgs: string;
   privateDocs: string;
-  mortgageType: string;
+  mortgageType: number;
   priorEncumbrances: string;
   term: string;
   region: string;
@@ -41,13 +41,34 @@ export const useTableFilters = () => {
   ]);
   const [ltvRange, setLtvRange] = useState<[number, number]>([0, 100]);
   const [dateFilter, setDateFilter] = useState("all");
+  const [mortgageTypeFilter, setMortgageTypeFilter] = useState("all");
 
   const itemFilter = useCallback(
     (property: Property) => {
       const [minAmount, maxAmount] = amountRange;
       const [minInterest, maxInterest] = interestRange;
       const [minLtv, maxLtv] = ltvRange;
-      let allDates = dateFilter === "all";
+      const allDates = dateFilter === "all";
+
+      // Convert mortgage type to number for comparison
+      const mortgageTypeNum = Number(property.mortgageType);
+
+      // Add debug logging
+      console.log("Filtering property:", {
+        propertyMortgageType: mortgageTypeNum,
+        filterValue: mortgageTypeFilter,
+        matches:
+          mortgageTypeFilter === "all" ||
+          (mortgageTypeFilter === "first" && mortgageTypeNum === 1) ||
+          (mortgageTypeFilter === "second" && mortgageTypeNum === 2) ||
+          (mortgageTypeFilter === "more" && mortgageTypeNum > 2),
+      });
+
+      const mortgageTypeMatches =
+        mortgageTypeFilter === "all" ||
+        (mortgageTypeFilter === "first" && mortgageTypeNum === 1) ||
+        (mortgageTypeFilter === "second" && mortgageTypeNum === 2) ||
+        (mortgageTypeFilter === "more" && mortgageTypeNum > 2);
 
       return (
         property.amount >= minAmount &&
@@ -56,6 +77,7 @@ export const useTableFilters = () => {
         property.interestRate <= maxInterest &&
         property.ltv >= minLtv &&
         property.ltv <= maxLtv &&
+        mortgageTypeMatches &&
         (allDates ||
           new Date(
             new Date().getTime() -
@@ -67,7 +89,7 @@ export const useTableFilters = () => {
           ) <= new Date(property.listingDateActive))
       );
     },
-    [dateFilter, amountRange, interestRange, ltvRange]
+    [dateFilter, amountRange, interestRange, ltvRange, mortgageTypeFilter]
   );
 
   return {
@@ -81,6 +103,8 @@ export const useTableFilters = () => {
     setLtvRange,
     dateFilter,
     setDateFilter,
+    mortgageTypeFilter,
+    setMortgageTypeFilter,
     itemFilter,
   };
 };
@@ -225,6 +249,8 @@ export const useListingTable = (listings: Property[]) => {
     setLtvRange,
     dateFilter,
     setDateFilter,
+    mortgageTypeFilter,
+    setMortgageTypeFilter,
     itemFilter,
   } = useTableFilters();
 
@@ -283,6 +309,8 @@ export const useListingTable = (listings: Property[]) => {
     setLtvRange,
     dateFilter,
     setDateFilter,
+    mortgageTypeFilter,
+    setMortgageTypeFilter,
     selectedKeys,
     filterSelectedKeys,
     onSelectionChange,

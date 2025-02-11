@@ -59,7 +59,7 @@ type ListingTableProps = {
     imgs: string;
     imgUrls?: string[];
     privateDocs: string;
-    mortgageType: string;
+    mortgageType: number;
     priorEncumbrances: string;
     term: string;
     region: string;
@@ -107,16 +107,10 @@ export default function Component({
 
   const {
     filterValue,
-    // priceFilter,
-    // setPriceFilter,
     dateFilter,
     setDateFilter,
-    // workerTypeFilter,
-    // setWorkerTypeFilter,
-    // statusFilter,
-    // setStatusFilter,
-    // startDateFilter,
-    // setStartDateFilter,
+    mortgageTypeFilter,
+    setMortgageTypeFilter,
     filterSelectedKeys,
     page,
     pages,
@@ -126,7 +120,6 @@ export default function Component({
     setSortDescriptor,
     visibleColumns,
     setVisibleColumns,
-    // headerColumns,
     sortedItems,
     filteredItems,
     onSearchChange,
@@ -395,7 +388,6 @@ export default function Component({
                         maxValue={30}
                         minValue={0}
                         step={1}
-                        // formatOptions={{style: "percent", minimumFractionDigits: 0}}
                       />
 
                       <RangeSlider
@@ -405,7 +397,6 @@ export default function Component({
                         maxValue={100}
                         minValue={0}
                         step={1}
-                        // formatOptions={{style: "percent", minimumFractionDigits: 0}}
                       />
                     </div>
 
@@ -418,6 +409,17 @@ export default function Component({
                       <Radio value="last7Days">Last 7 days</Radio>
                       <Radio value="last30Days">Last 30 days</Radio>
                       <Radio value="last60Days">Last 60 days</Radio>
+                    </RadioGroup>
+
+                    <RadioGroup
+                      label="Mortgage Type"
+                      value={mortgageTypeFilter}
+                      onValueChange={setMortgageTypeFilter}
+                    >
+                      <Radio value="all">All</Radio>
+                      <Radio value="first">First</Radio>
+                      <Radio value="second">Second</Radio>
+                      <Radio value="more">More</Radio>
                     </RadioGroup>
                   </div>
                 </PopoverContent>
@@ -561,6 +563,8 @@ export default function Component({
     filterSelectedKeys,
     setVisibleColumns,
     enableRowSelection,
+    mortgageTypeFilter,
+    setMortgageTypeFilter,
   ]);
 
   const topBar = useMemo(() => {

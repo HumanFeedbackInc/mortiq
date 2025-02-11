@@ -201,7 +201,10 @@ export const useListingUpload = () => {
         listingId: result.listingId,
       };
     } catch (error) {
+      //Failing here
       console.error("Listing upload failed:", error);
+      console.error("PAYLOAD");
+      console.error(formData);
       return {
         success: false,
         error:

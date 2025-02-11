@@ -187,7 +187,11 @@ export const createListingAction = async (
     data: { user },
     error: authError,
   } = await supabase.auth.getUser();
-  if (authError) throw new Error(`User get failed: ${authError.message}`);
+  if (authError) {
+    console.error("authError");
+    console.error(authError);
+    throw new Error(`User get failed: ${authError.message}`);
+  }
   const userId_ = user?.id;
   if (!userId_) throw new Error("User ID not found");
   //get account id from user id
@@ -197,8 +201,11 @@ export const createListingAction = async (
     .eq("user_id", userId_)
     .single();
 
-  if (accountError)
+  if (accountError) {
+    console.error("accountError");
+    console.error(accountError);
     throw new Error(`Account get failed: ${accountError.message}`);
+  }
   const accountId_ = accountData?.account_id;
   if (!accountId_) throw new Error("Account ID not found");
 
@@ -227,8 +234,8 @@ export const createListingAction = async (
     // console.log("uploadData");
     // console.log(uploadData);
     if (uploadError) {
-      // console.error("uploadFileError");
-      // console.log(uploadError);
+      console.error("uploadFileError");
+      console.log(uploadError);
       throw new Error(`Document upload failed: ${uploadError.message}`);
     }
     return filePath;
@@ -301,8 +308,11 @@ export const createListingAction = async (
     .select<"*", Database["public"]["Tables"]["property"]["Row"]>("*")
     .single();
 
-  if (propertyError)
+  if (propertyError) {
+    console.error("propertyError");
+    console.error(propertyError);
     throw new Error(`Property insert failed: ${propertyError.message}`);
+  }
 
   //get user id from session instead of getUser()
   // const userId = session.user.id;
@@ -335,6 +345,8 @@ export const createListingAction = async (
       .from("property")
       .delete()
       .eq("property_id", propertyData.property_id);
+    console.error("listingError");
+    console.error(listingError);
     throw new Error(`Listing insert failed: ${listingError.message}`);
   }
 
