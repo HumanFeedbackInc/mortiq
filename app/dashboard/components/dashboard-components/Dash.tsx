@@ -145,7 +145,8 @@ export default function Component({
               }
             }}
             onSelect={(key) => {
-              if (key && key in componentMap) {
+              if (typeof key !== "string") return;
+              if (key in componentMap) {
                 setSelectedKey(key as ComponentKeys);
               }
             }}
