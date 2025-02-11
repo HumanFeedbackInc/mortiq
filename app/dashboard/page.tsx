@@ -28,13 +28,13 @@ export default async function Dashboard() {
   const userAccounts: UserAccountTableType[] = accounts.map((account) => ({
     user_id: account.account.userId as UUID,
     account_id: account.account.accountId as UUID,
-    role: account.roles?.roleName || "Unknown",
-    first_name: account.account.firstName,
-    last_name: account.account.lastName,
-    email: account.users?.email || "Unknown",
-    phone: account.users?.phone || "Unknown",
-    profile_picture: account.account?.profilePicture || "Unknown",
-    account_status: account.account.accountStatus || "Unknown",
+    role: account.roles?.roleName || "unknown",
+    first_name: account.account.firstName || "unknown",
+    last_name: account.account.lastName || "unknown",
+    email: account.users?.email || "unknown",
+    phone: account.users?.phone || account.account.phone || "unknown",
+    profile_picture: account.account?.profilePicture || "",
+    account_status: account.account.accountStatus || "unknown",
     created_at: new Date(), //change to now timestamp
   }));
   const pendingUsers = await db
@@ -48,7 +48,8 @@ export default async function Dashboard() {
       user_id: pendingUser.pending_user.userId as UUID,
       account_id: pendingUser.pending_user.userId as UUID,
       email: pendingUser.users?.email || "Unknown",
-      phone: pendingUser.users?.phone || "Unknown",
+      phone:
+        pendingUser.users?.phone || pendingUser.pending_user.phone || "Unknown",
       profile_picture: pendingUser.pending_user?.profilePicture || "Unknown",
       account_status: "Pending",
       created_at: new Date(),
@@ -57,6 +58,7 @@ export default async function Dashboard() {
       last_name: pendingUser.pending_user?.lastName || "Unknown",
     })
   );
+
   const listings = await getPendingProperties();
 
   const listingsWithImages: ListingWithImages[] = [];
@@ -104,6 +106,7 @@ export default async function Dashboard() {
   };
   console.log("\n\n================LISTINGS WITH IMAGES=================");
   console.log(listingsWithImages);
+  console.log();
   return (
     <div className="flex flex-col gap-6">
       <Dash dashboardDataLists={dashboardDataLists} />

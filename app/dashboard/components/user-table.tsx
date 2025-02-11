@@ -83,6 +83,8 @@ export default function UserTable({
   selectedActions: SelectedAction[];
   title: string;
 }) {
+  console.log("USERS");
+  console.table(users);
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(

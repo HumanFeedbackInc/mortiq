@@ -44,7 +44,7 @@ import { useMemoizedCallback } from "./use-memoized-callback";
 import { useListingTable } from "./useListingTable";
 // import {columns} from "./data";
 import { RangeSlider } from "./amount-slider";
-
+import { approveListing } from "@/app/actions";
 type ListingTableProps = {
   listings: {
     listingDateActive: string;
@@ -150,7 +150,7 @@ export default function Component({
     onClick: handleMemberClick,
   }));
 
-  const handleSelectedAction = useMemoizedCallback((action: string) => {
+  const handleSelectedAction = useMemoizedCallback(async (action: string) => {
     const selectedRows =
       filterSelectedKeys === "all"
         ? sortedItems
@@ -160,6 +160,16 @@ export default function Component({
     // TODO: Execute your approval/rejection logic here.
     if (action === "approve") {
       console.log("Approving selected rows:", selectedRows);
+      //TODO: Call approveListing function
+      const promises = [];
+      for (const row of selectedRows) {
+        console.log("Row:", row);
+        //TODO: Call approveListing function
+        // await approveListing(row.listingId);
+        promises.push(approveListing(row.listingId));
+      }
+      await Promise.all(promises);
+      console.log("All listings approved");
     } else if (action === "reject") {
       console.log("Rejecting selected rows:", selectedRows);
     }
