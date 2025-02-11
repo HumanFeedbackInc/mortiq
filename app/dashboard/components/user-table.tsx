@@ -31,7 +31,13 @@ import {
 } from "@heroui/react";
 
 import { SearchIcon } from "@heroui/shared-icons";
-import React, { useMemo, useRef, useCallback, useState } from "react";
+import React, {
+  useMemo,
+  useRef,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import { Icon } from "@iconify/react";
 import { cn } from "@heroui/react";
 
@@ -108,6 +114,13 @@ export default function UserTable({
     end: null,
   });
   const [userIdFilter, setUserIdFilter] = React.useState("");
+
+  // Add useEffect to reset the table state when users prop changes
+  useEffect(() => {
+    setFilterValue("");
+    setSelectedKeys(new Set([]));
+    setPage(1);
+  }, [users]);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;

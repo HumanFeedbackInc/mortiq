@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Link } from "@heroui/link";
 import { Snippet } from "@heroui/snippet";
 import { Code } from "@heroui/code";
@@ -8,10 +8,12 @@ import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import { GithubIcon } from "@/components/icons";
 import React from "react";
-import {Button} from "@heroui/react";
-import {Icon} from "@iconify/react";
+import { Button } from "@heroui/react";
+import { Icon } from "@iconify/react";
 import AppScreenshot from "@/components/hero/app-screenshot";
 import FadeInImage from "@/components/hero/fade-in-image";
+import demoimg from "../public/demoimg.png";
+import Image from "next/image";
 
 export default function Component() {
   return (
@@ -31,16 +33,17 @@ export default function Component() {
             radius="full"
             variant="bordered"
           >
-            New onboarding experience
+            Discover New Opportunities
           </Button>
           <div className="text-center text-[clamp(40px,10vw,44px)] font-bold leading-[1.2] tracking-tighter sm:text-[64px]">
             <div className="bg-hero-section-title bg-clip-text  dark:from-[#FFFFFF] dark:to-[#FFFFFF66]">
-              Easiest way to <br /> power global teams.
+              Simplifying Mortgage <br /> Re-Assignment Trading.
             </div>
           </div>
           <p className="text-center font-normal leading-7 text-default-500 sm:w-[466px] sm:text-[18px]">
-            Acme makes running global teams simple. HR, Payroll, International Employment,
-            contractor management and more.
+            Our platform streamlines the process of trading mortgage
+            re-assignments, making it easier for you to manage and grow your
+            investments.
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
             <Button
@@ -63,12 +66,13 @@ export default function Component() {
               radius="full"
               variant="bordered"
             >
-              See our plans
+              Explore Plans
             </Button>
           </div>
         </section>
         <div className="z-20 mt-auto w-[calc(100%-calc(theme(spacing.4)*2))] max-w-6xl overflow-hidden rounded-tl-2xl rounded-tr-2xl border-1 border-b-0 border-[#FFFFFF1A] bg-background bg-opacity-0 p-4">
-          <AppScreenshot />
+          {/* <AppScreenshot /> */}
+          <Image src={demoimg} alt="demoimg" height={1000} width={1500} />
         </div>
       </main>
       <div className="pointer-events-none inset-0 top-[-25%] z-10 scale-150 select-none sm:absolute sm:scale-125">

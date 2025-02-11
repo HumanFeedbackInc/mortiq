@@ -803,6 +803,67 @@ export const createOrUpdatePendingUser = async (
   return { success: true, data: res1 };
 };
 
+export type UpdateExistingUserType = {
+  firstName: string;
+  lastName: string;
+  role: "ADMIN" | "BROKER" | "INVESTOR";
+  phoneNumber: string;
+  userId: string;
+};
+export const UpdateExistingUser = async (userData: UpdateExistingUserType) => {
+  // Add detailed logging
+  console.log("UpdateUser received userData:", {
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    phoneNumber: userData.phoneNumber, // Check if this is null
+    // phone: userData.phone, // Check if this exists
+    userId: userData.userId,
+  });
+
+  try {
+    const result = await db
+      .update(account)
+      .set({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phone: userData.phoneNumber || "", // Add fallback empty string if null
+      })
+      .where(eq(account.userId, userData.userId))
+      .returning();
+    //update the user_roles table
+    const userRolesPayload = {
+      userId: userData.userId,
+      roleId: userData.role,
+    };
+    //delete existing user_roles for the user
+    const userRolesDeleteRes = await db
+      .delete(userRoles)
+      .where(eq(userRoles.userId, userData.userId))
+      .execute();
+
+    //get correct role id from roles table
+    const roleId = await db
+      .select({ id: roles.id })
+      .from(roles)
+      .where(eq(roles.roleName, userData.role))
+      .execute();
+    //insert the new user_roles for the user
+    const userRolesRes = await db
+      .insert(userRoles)
+      .values({
+        userId: userData.userId,
+        roleId: roleId[0].id,
+      })
+      .execute();
+
+    console.log("Update result:", result);
+    return { success: true, data: result[0] };
+  } catch (error) {
+    console.error("UpdateUser error:", error);
+    return { success: false, error: "Failed to update user" };
+  }
+};
+
 export const UpdateUser = async (userData: PendingUserData) => {
   // Add detailed logging
   console.log("UpdateUser received userData:", {

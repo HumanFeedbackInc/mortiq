@@ -74,9 +74,9 @@ const ReviewAndPaymentForm = React.forwardRef<
     } as ListingFormData;
 
     const result = await uploadListing(
-      listingData,
-      formData.listingDocuments || [],
-      formData.listingImages || []
+      listingData
+      // formData.listingDocuments || [],
+      // formData.listingImages || []
     );
 
     if (result.success) {
