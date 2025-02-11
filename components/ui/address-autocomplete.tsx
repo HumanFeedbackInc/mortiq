@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Input, InputProps } from "@heroui/react";
 import { usePlacesWidget } from "react-google-autocomplete";
 
-interface AddressDetails {
+export interface AddressDetails {
   unitNumber: string;
   streetAddress: string;
   city: string;
@@ -16,15 +16,16 @@ interface AddressDetails {
   formattedAddress?: string;
 }
 
-interface AddressAutocompleteProps extends Omit<InputProps, 'onChange' | 'defaultValue'> {
+interface AddressAutocompleteProps
+  extends Omit<InputProps, "onChange" | "defaultValue"> {
   onAddressSelect: (address: AddressDetails) => void;
   defaultValue?: AddressDetails;
 }
 
-export function AddressAutocomplete({ 
-  onAddressSelect, 
+export function AddressAutocomplete({
+  onAddressSelect,
   defaultValue,
-  ...props 
+  ...props
 }: AddressAutocompleteProps) {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>(
     defaultValue || {
@@ -37,7 +38,7 @@ export function AddressAutocomplete({
       formattedAddress: "",
     }
   );
-  
+
   // Add useEffect to update state when defaultValue changes
   useEffect(() => {
     if (defaultValue) {
@@ -51,6 +52,7 @@ export function AddressAutocomplete({
       componentRestrictions: { country: "ca" },
       types: ["address"],
     },
+    // @ts-ignore
     onPlaceSelected: (place: google.maps.places.PlaceResult) => {
       if (!place.address_components) return;
 
@@ -65,9 +67,9 @@ export function AddressAutocomplete({
       };
 
       // Extract address components
-      place.address_components.forEach((component) => {
+      place.address_components.forEach((component: any) => {
         const types = component.types;
-        
+
         if (types.includes("street_number") || types.includes("route")) {
           newAddressDetails.streetAddress += component.long_name + " ";
         }
@@ -101,11 +103,13 @@ export function AddressAutocomplete({
       ...addressDetails,
       [field]: value,
     };
-    
+
     // Use the updated values to build the formatted address
-    updatedDetails.formattedAddress = field === 'formattedAddress' ? value : 
-      `${updatedDetails.unitNumber ? `Unit ${updatedDetails.unitNumber}, ` : ''}${updatedDetails.streetAddress}, ${updatedDetails.city}, ${updatedDetails.province} ${updatedDetails.postalCode}, ${updatedDetails.country}`.trim();
-    
+    updatedDetails.formattedAddress =
+      field === "formattedAddress"
+        ? value
+        : `${updatedDetails.unitNumber ? `Unit ${updatedDetails.unitNumber}, ` : ""}${updatedDetails.streetAddress}, ${updatedDetails.city}, ${updatedDetails.province} ${updatedDetails.postalCode}, ${updatedDetails.country}`.trim();
+
     setAddressDetails(updatedDetails);
     onAddressSelect(updatedDetails);
   };
@@ -116,7 +120,7 @@ export function AddressAutocomplete({
         {...props}
         ref={materialRef as any}
         value={addressDetails.formattedAddress}
-        onChange={(e) => handleManualChange('formattedAddress', e.target.value)}
+        onChange={(e) => handleManualChange("formattedAddress", e.target.value)}
         placeholder="Search for address"
         label="Search Address"
       />
@@ -124,44 +128,44 @@ export function AddressAutocomplete({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
           label="Unit Number"
-          value={addressDetails.unitNumber || ''}
-          onChange={(e) => handleManualChange('unitNumber', e.target.value)}
+          value={addressDetails.unitNumber || ""}
+          onChange={(e) => handleManualChange("unitNumber", e.target.value)}
           placeholder="Unit/Suite/Apt (optional)"
           className="md:col-span-1"
         />
         <Input
           label="Street Address"
-          value={addressDetails.streetAddress || ''}
-          onChange={(e) => handleManualChange('streetAddress', e.target.value)}
+          value={addressDetails.streetAddress || ""}
+          onChange={(e) => handleManualChange("streetAddress", e.target.value)}
           placeholder="Street address"
           className="md:col-span-1"
         />
         <Input
           label="City"
-          value={addressDetails.city || ''}
-          onChange={(e) => handleManualChange('city', e.target.value)}
+          value={addressDetails.city || ""}
+          onChange={(e) => handleManualChange("city", e.target.value)}
           placeholder="City"
         />
         <Input
           label="Province"
-          value={addressDetails.province || ''}
-          onChange={(e) => handleManualChange('province', e.target.value)}
+          value={addressDetails.province || ""}
+          onChange={(e) => handleManualChange("province", e.target.value)}
           placeholder="Province"
         />
         <Input
           label="Postal Code"
-          value={addressDetails.postalCode || ''}
-          onChange={(e) => handleManualChange('postalCode', e.target.value)}
+          value={addressDetails.postalCode || ""}
+          onChange={(e) => handleManualChange("postalCode", e.target.value)}
           placeholder="Postal code"
         />
         <Input
           label="Country"
-          value={addressDetails.country || ''}
-          onChange={(e) => handleManualChange('country', e.target.value)}
+          value={addressDetails.country || ""}
+          onChange={(e) => handleManualChange("country", e.target.value)}
           placeholder="Country"
           className="md:col-span-2"
         />
       </div>
     </div>
   );
-} 
+}

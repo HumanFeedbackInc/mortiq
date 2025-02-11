@@ -1,11 +1,16 @@
 "use client";
 
-import type {Selection, SortDescriptor} from "@heroui/react";
-import type {ColumnsKey, StatusOptions, Users} from "./data";
-import type {Key} from "@react-types/shared";
-import type {Database} from "@/types/supabase";
-import {Image as UImage} from "@heroui/react";
-import { CirclePercent, CircleDollarSign } from 'lucide-react';
+// import type { Selection, SortDescriptor } from "@heroui/react";
+// import type { ColumnsKey, StatusOptions, Users } from "./data";
+// import type { Key } from "@react-types/shared";
+// import type { Database } from "@/types/supabase";
+import { Image as UImage } from "@heroui/react";
+import {
+  CirclePercent,
+  CircleDollarSign,
+  House,
+  CalendarDays,
+} from "lucide-react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -22,34 +27,24 @@ import {
   RadioGroup,
   Radio,
   Chip,
-  User,
   Pagination,
   Divider,
-  Tooltip,
   useButton,
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@heroui/react";
-import {SearchIcon} from "@heroui/shared-icons";
-import React, {useMemo, useRef, useCallback, useState} from "react";
-import {Icon} from "@iconify/react";
-import {cn} from "@heroui/react";
+import { SearchIcon } from "@heroui/shared-icons";
+import React, { useMemo, useRef } from "react";
+import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
 
-import {CopyText} from "./copy-text";
-import {EyeFilledIcon} from "./eye";
-import {EditLinearIcon} from "./edit";
-import {DeleteFilledIcon} from "./delete";
-import {ArrowDownIcon} from "./arrow-down";
-import {ArrowUpIcon} from "./arrow-up";
 
-import {useMemoizedCallback} from "./use-memoized-callback";
-import {useListingTable} from "./useListingTable";
+import { useMemoizedCallback } from "./use-memoized-callback";
+import { useListingTable } from "./useListingTable";
 // import {columns} from "./data";
-import {Status} from "./Status";
-import {AmountSlider, RangeSlider} from "./amount-slider";
+import { RangeSlider } from "./amount-slider";
 
 type ListingTableProps = {
   listings: {
@@ -63,7 +58,7 @@ type ListingTableProps = {
     estimatedFairMarketValue: number;
     propertyType: string;
     imgs: string;
-    imgUrls: string[];
+    imgUrls?: string[];
     privateDocs: string;
     mortgageType: string;
     priorEncumbrances: string;
@@ -71,9 +66,9 @@ type ListingTableProps = {
     region: string;
     ltv: number;
     dateFunded: string;
-}[]
+  }[];
   enableRowSelection?: boolean;
-}
+};
 
 const columns = [
   { uid: "actions", name: "Actions" },
@@ -93,35 +88,36 @@ const columns = [
 ] as const;
 
 // TODO: TEMPORARY HARDCODED IMAGE URL - REMOVE BEFORE PROD
-const TEMP_HARDCODED_IMAGE = 'https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages//house1.png';
+const TEMP_HARDCODED_IMAGE =
+  "https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages//house1.png";
 
 const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
 };
 
-export default function Component({ 
+export default function Component({
   listings,
-  enableRowSelection = false
+  enableRowSelection = false,
 }: ListingTableProps) {
   // console.log('Listings in table component:', listings);
-  
+
   const {
     filterValue,
-    priceFilter,
-    setPriceFilter,
+    // priceFilter,
+    // setPriceFilter,
     dateFilter,
     setDateFilter,
-    workerTypeFilter,
-    setWorkerTypeFilter,
-    statusFilter, 
-    setStatusFilter,
-    startDateFilter,
-    setStartDateFilter,
+    // workerTypeFilter,
+    // setWorkerTypeFilter,
+    // statusFilter,
+    // setStatusFilter,
+    // startDateFilter,
+    // setStartDateFilter,
     filterSelectedKeys,
     page,
     pages,
@@ -131,7 +127,7 @@ export default function Component({
     setSortDescriptor,
     visibleColumns,
     setVisibleColumns,
-    headerColumns,
+    // headerColumns,
     sortedItems,
     filteredItems,
     onSearchChange,
@@ -155,31 +151,35 @@ export default function Component({
   const eyesRef = useRef<HTMLButtonElement | null>(null);
   const editRef = useRef<HTMLButtonElement | null>(null);
   const deleteRef = useRef<HTMLButtonElement | null>(null);
-  const {getButtonProps: getEyesProps} = useButton({ref: eyesRef});
-  const {getButtonProps: getEditProps} = useButton({ref: editRef});
-  const {getButtonProps: getDeleteProps} = useButton({ref: deleteRef});
+  const { getButtonProps: getEyesProps } = useButton({ ref: eyesRef });
+  const { getButtonProps: getEditProps } = useButton({ ref: editRef });
+  const { getButtonProps: getDeleteProps } = useButton({ ref: deleteRef });
   const getMemberInfoProps = useMemoizedCallback(() => ({
     onClick: handleMemberClick,
   }));
 
-  const renderCell = (item: ListingTableProps['listings'][0], columnKey: React.Key) => {
+  const renderCell = (
+    item: ListingTableProps["listings"][0],
+    columnKey: React.Key
+  ) => {
     const columnToProperty: Record<string, keyof typeof item> = {
-      "images": "imgUrls",
-      "address": "address",
-      "amount": "amount",
-      "interest_rate": "interestRate",
-      "ltv": "ltv",
-      "property_type": "propertyType",
-      "region": "region",
-      "market_value": "estimatedFairMarketValue",
-      "date_funded": "dateFunded",
-      "maturity_date": "term",
-      "mortgage_type": "mortgageType",
-      "term": "term",
-      "list_date": "listedDate"
+      images: "imgUrls",
+      address: "address",
+      amount: "amount",
+      interest_rate: "interestRate",
+      ltv: "ltv",
+      property_type: "propertyType",
+      region: "region",
+      market_value: "estimatedFairMarketValue",
+      date_funded: "dateFunded",
+      maturity_date: "term",
+      mortgage_type: "mortgageType",
+      term: "term",
+      list_date: "listedDate",
     };
 
-    const propertyKey = columnToProperty[columnKey as string] || columnKey as keyof typeof item;
+    const propertyKey =
+      columnToProperty[columnKey as string] || (columnKey as keyof typeof item);
     const cellValue = item[propertyKey];
 
     // Handle different column types
@@ -190,60 +190,70 @@ export default function Component({
             variant="faded"
             color="warning"
             size="sm"
-            startContent={<CircleDollarSign className="mr-1 -ml-1"/>}
+            startContent={<CircleDollarSign className="mr-1 -ml-1" />}
           >
             {formatCurrency(Number(cellValue) || 0)}
           </Chip>
-        )
+        );
       case "market_value":
         return (
           <Chip
             variant="faded"
             color="success"
             size="sm"
-            startContent={<CircleDollarSign className="mr-1 -ml-1"/>}
+            startContent={<CircleDollarSign className="mr-1 -ml-1" />}
           >
             {formatCurrency(Number(cellValue) || 0)}
           </Chip>
-        )
-      
+        );
+
       case "interest_rate":
         return (
           <Chip
             variant="flat"
             color="success"
             size="sm"
-            endContent={<CirclePercent className="ml-1 -mr-1"/>}
+            endContent={<CirclePercent className="ml-1 -mr-1" />}
           >
             {cellValue || 0}
           </Chip>
-        ) 
+        );
       case "ltv":
         return (
           <Chip
             variant="flat"
             color="primary"
             size="sm"
-            endContent={<CirclePercent className="ml-1 -mr-1"/>}
+            endContent={<CirclePercent className="ml-1 -mr-1" />}
           >
             {cellValue || 0}
           </Chip>
-        ) 
-        // return `${cellValue || 0}%`;
-      
+        );
+      // return `${cellValue || 0}%`;
+      case "property_type":
+        return (
+          <Chip
+            variant="flat"
+            color="primary"
+            size="sm"
+            startContent={<House className="mr-1 -ml-1" />}
+          >
+            {cellValue || 0}
+          </Chip>
+        );
       case "images":
-        //pull first image from img bucket 
+        //pull first image from img bucket
         // const publicBucketFolder = cellValue as string
         //grab the first image from the bucket
         // const firstImage = await supabase.storage.from('propertyImages').getPublicUrl(publicBucketFolder)
-        
+
         const imageUrls = cellValue as string[];
         let firstImage = TEMP_HARDCODED_IMAGE;
         if (imageUrls && imageUrls.length > 0) {
-          firstImage = imageUrls[0]
+          firstImage = imageUrls[0];
         }
-        console.log("FIRST IMAGE FROM LISTING TABLE")
-        console.log(firstImage)
+        console.log("FIRST IMAGE FROM LISTING TABLE");
+        console.log(firstImage);
 
         return cellValue ? (
           <div className="relative w-16 h-16">
@@ -257,17 +267,27 @@ export default function Component({
             />
           </div>
         ) : null;
-      
+
       case "term":
         // console.log('Term:', cellValue);
         if (cellValue) {
-          //TODO FIX THIS: 
+          //TODO FIX THIS:
           // @ts-ignore
-          const term = cellValue["term"] || ""
+          const term = cellValue["term"] || "";
           // console.log('Term:', term);
-          return term
+
+          return (
+            <Chip
+              variant="flat"
+              color="primary"
+              size="sm"
+              startContent={<CalendarDays className="mr-1 -ml-1" />}
+            >
+              {term}
+            </Chip>
+          );
         } else {
-          return '-'
+          return "-";
         }
       case "maturity_date":
         try {
@@ -277,11 +297,11 @@ export default function Component({
             return date.toLocaleDateString();
           }
           // If it's not a valid date, return the string value
-          return String(cellValue || '-');
+          return String(cellValue || "-");
         } catch {
-          return String(cellValue || '-');
+          return String(cellValue || "-");
         }
-      
+
       case "actions":
         return (
           <div className="flex gap-2">
@@ -301,9 +321,9 @@ export default function Component({
             </Link>
           </div>
         );
-      
+
       default:
-        return cellValue ? String(cellValue) : '-';
+        return cellValue ? String(cellValue) : "-";
     }
   };
 
@@ -314,7 +334,9 @@ export default function Component({
           <div className="flex items-center gap-4">
             <Input
               className="min-w-[200px]"
-              endContent={<SearchIcon className="text-default-400" width={16} />}
+              endContent={
+                <SearchIcon className="text-default-400" width={16} />
+              }
               placeholder="Search"
               size="sm"
               value={filterValue}
@@ -327,7 +349,11 @@ export default function Component({
                     className="bg-default-100 text-default-800"
                     size="sm"
                     startContent={
-                      <Icon className="text-default-400" icon="solar:tuning-2-linear" width={16} />
+                      <Icon
+                        className="text-default-400"
+                        icon="solar:tuning-2-linear"
+                        width={16}
+                      />
                     }
                   >
                     Filter
@@ -337,20 +363,20 @@ export default function Component({
                   <div className="flex w-full flex-col gap-6 px-2 py-4">
                     <div className="flex flex-col gap-2">
                       <span className="text-small font-bold">Filters</span>
-                      
-                      <RangeSlider 
+
+                      <RangeSlider
                         label="Price Range"
-                        value={amountRange} 
+                        value={amountRange}
                         onChange={setAmountRange}
                         maxValue={1000000}
                         minValue={0}
                         step={10000}
-                        formatOptions={{style: "currency", currency: "USD"}}
+                        formatOptions={{ style: "currency", currency: "USD" }}
                       />
 
-                      <RangeSlider 
+                      <RangeSlider
                         label="Interest Rate"
-                        value={interestRange} 
+                        value={interestRange}
                         onChange={setInterestRange}
                         maxValue={30}
                         minValue={0}
@@ -358,9 +384,9 @@ export default function Component({
                         // formatOptions={{style: "percent", minimumFractionDigits: 0}}
                       />
 
-                      <RangeSlider 
+                      <RangeSlider
                         label="LTV"
-                        value={ltvRange} 
+                        value={ltvRange}
                         onChange={setLtvRange}
                         maxValue={100}
                         minValue={0}
@@ -390,7 +416,11 @@ export default function Component({
                     className="bg-default-100 text-default-800"
                     size="sm"
                     startContent={
-                      <Icon className="text-default-400" icon="solar:sort-linear" width={16} />
+                      <Icon
+                        className="text-default-400"
+                        icon="solar:sort-linear"
+                        width={16}
+                      />
                     }
                   >
                     Sort
@@ -407,7 +437,9 @@ export default function Component({
                         setSortDescriptor({
                           column: item.uid,
                           direction:
-                            sortDescriptor.direction === "ascending" ? "descending" : "ascending",
+                            sortDescriptor.direction === "ascending"
+                              ? "descending"
+                              : "ascending",
                         });
                       }}
                     >
@@ -442,7 +474,9 @@ export default function Component({
                   selectionMode="multiple"
                   onSelectionChange={setVisibleColumns}
                 >
-                  {(item) => <DropdownItem key={item.uid}>{item.name}</DropdownItem>}
+                  {(item) => (
+                    <DropdownItem key={item.uid}>{item.name}</DropdownItem>
+                  )}
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -458,13 +492,17 @@ export default function Component({
                   : `${filterSelectedKeys.size} Selected`}
               </div>
 
-              {(filterSelectedKeys === "all" || filterSelectedKeys.size > 0) && (
+              {(filterSelectedKeys === "all" ||
+                filterSelectedKeys.size > 0) && (
                 <Dropdown>
                   <DropdownTrigger>
                     <Button
                       className="bg-default-100 text-default-800"
                       endContent={
-                        <Icon className="text-default-400" icon="solar:alt-arrow-down-linear" />
+                        <Icon
+                          className="text-default-400"
+                          icon="solar:alt-arrow-down-linear"
+                        />
                       }
                       size="sm"
                       variant="flat"
@@ -507,8 +545,14 @@ export default function Component({
     return (
       <div className="mb-[18px] flex items-center justify-between">
         <div className="flex w-[226px] items-center gap-2">
-          <h1 className="text-2xl font-[700] leading-[32px]">Property Listings</h1>
-          <Chip className="hidden items-center text-default-500 sm:flex" size="sm" variant="flat">
+          <h1 className="text-2xl font-[700] leading-[32px]">
+            Property Listings
+          </h1>
+          <Chip
+            className="hidden items-center text-default-500 sm:flex"
+            size="sm"
+            variant="flat"
+          >
             {listings.length}
           </Chip>
         </div>
@@ -536,10 +580,20 @@ export default function Component({
                 : `${filterSelectedKeys.size} of ${filteredItems.length} selected`}
             </span>
             <div className="flex items-center gap-3">
-              <Button isDisabled={page === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+              <Button
+                isDisabled={page === 1}
+                size="sm"
+                variant="flat"
+                onPress={onPreviousPage}
+              >
                 Previous
               </Button>
-              <Button isDisabled={page === pages} size="sm" variant="flat" onPress={onNextPage}>
+              <Button
+                isDisabled={page === pages}
+                size="sm"
+                variant="flat"
+                onPress={onNextPage}
+              >
                 Next
               </Button>
             </div>
@@ -547,12 +601,21 @@ export default function Component({
         )}
       </div>
     );
-  }, [filterSelectedKeys, page, pages, filteredItems.length, onPreviousPage, onNextPage, enableRowSelection]);
+  }, [
+    filterSelectedKeys,
+    page,
+    pages,
+    filteredItems.length,
+    onPreviousPage,
+    onNextPage,
+    enableRowSelection,
+  ]);
 
   const handleMemberClick = useMemoizedCallback(() => {
     setSortDescriptor({
       column: "memberInfo",
-      direction: sortDescriptor.direction === "ascending" ? "descending" : "ascending",
+      direction:
+        sortDescriptor.direction === "ascending" ? "descending" : "ascending",
     });
   });
   // console.log('Sorted items:', sortedItems);
@@ -571,35 +634,35 @@ export default function Component({
         }}
         selectedKeys={enableRowSelection ? filterSelectedKeys : undefined}
         selectionMode={enableRowSelection ? "multiple" : "none"}
+        // @ts-ignore
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
         onSelectionChange={enableRowSelection ? onSelectionChange : undefined}
         onSortChange={setSortDescriptor}
-        columns={columns.filter(column => isColumnVisible(column.uid))}
+        columns={columns.filter((column) => isColumnVisible(column.uid))}
       >
         <TableHeader>
           {columns
-            .filter(column => isColumnVisible(column.uid))
+            .filter((column) => isColumnVisible(column.uid))
             .map((column) => (
-              <TableColumn 
-                key={column.uid} 
-                allowsSorting={column.uid !== 'actions'}
+              <TableColumn
+                key={column.uid}
+                allowsSorting={column.uid !== "actions"}
               >
                 {column.name}
               </TableColumn>
-            ))
-          }
+            ))}
         </TableHeader>
-        <TableBody 
-          items={sortedItems}
-          emptyContent={"No listings found"}
-        >
+        <TableBody items={sortedItems} emptyContent={"No listings found"}>
           {(item) => (
             <TableRow key={item.listingId}>
               {(columnKey) => (
                 <TableCell>
-                  {isColumnVisible(columnKey.toString()) ? renderCell(item, columnKey) : null}
+                  {isColumnVisible(columnKey.toString())
+                    // @ts-ignore
+                    ? renderCell(item, columnKey)
+                    : null}
                 </TableCell>
               )}
             </TableRow>

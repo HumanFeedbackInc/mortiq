@@ -30,13 +30,15 @@ export const FileUpload = ({
   id = "default",
   label = "Upload file",
   showHint = true,
+  value = [],
 }: {
   onChange?: (files: File[]) => void;
   id?: string;
   label?: string;
   showHint?: boolean;
+  value?: File[];
 }) => {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>(value);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {

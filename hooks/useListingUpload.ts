@@ -1,7 +1,8 @@
-import { createListingAction } from '@/app/actions';
-import { createClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
-import { Database } from '@/types/supabase';
+import { createListingAction } from "@/app/actions";
+import { createClient } from "@supabase/supabase-js";
+import { v4 as uuidv4 } from "uuid";
+import { Database } from "@/types/supabase";
+import { ListingFormData } from "@/app/(auth-pages)/sign-up/components/ListingFormContext";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -42,7 +43,7 @@ interface ListingData {
   squareMeters?: number;
   numberOfUnits?: number;
   propertyDescription?: string;
-  
+
   // Full Address Details
   fullAddressDetails?: {
     streetAddress: string;
@@ -64,15 +65,28 @@ interface UploadResult {
 
 export const useListingUpload = () => {
   const uploadListing = async (
-    listingData: ListingData,
+    formData: ListingFormData,
     documents: File[],
     images: File[]
   ): Promise<UploadResult> => {
     try {
+      if (!formData.loanAmount) {
+        throw new Error("Loan amount is required");
+      }
+
+      const listingData: ListingData = {
+        ...formData,
+        loanAmount: formData.loanAmount,
+        mortgageType: formData.mortgageType || "",
+        interestRate: formData.interestRate || 0,
+        term: formData.term || "",
+        ltv: formData.ltv || 0,
+      } as ListingData;
+
       const result = await createListingAction(listingData, documents, images);
       // // Check for active session first
       // const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
+
       // if (sessionError || !session) {
       //   throw new Error('Please sign in to create a listing');
       // }
@@ -133,13 +147,13 @@ export const useListingUpload = () => {
       //   ltv: listingData.ltv,
       //   date_funded: timestamp,
       // };
-      
+
       // const {data: propertyData, error: propertyError} = await supabase
       //   .from('property')
       //   .insert(propertyDataInsert)
       //   .select<'*', Database['public']['Tables']['property']['Row']>('*')
       //   .single();
-      
+
       // //get user id from session instead of getUser()
       // const userId = session.user.id;
       // if (!userId) throw new Error('User ID not found');
@@ -158,11 +172,11 @@ export const useListingUpload = () => {
       // .insert(listingDataInsert)
       // .select<'*', Database['public']['Tables']['listings']['Row']>('*')
       // .single();
-      
+
       // if (listingError){
       //   await supabase.from('property').delete().eq('property_id', propertyData.property_id);
       //   throw new Error(`Listing insert failed: ${listingError.message}`);
-      // }        
+      // }
 
       // // 4. Create active listings record in database
       // const activeListingsDataInsert: Database['public']['Tables']['active_listings']['Insert'] = {
@@ -175,27 +189,26 @@ export const useListingUpload = () => {
       // .insert(activeListingsDataInsert)
       // .select<'*', Database['public']['Tables']['active_listings']['Row']>('*')
       // .single();
-      
+
       // if (activeListingsError){
       //   await supabase.from('listings').delete().eq('listing_id', listingsDataResult.listing_id);
       //   await supabase.from('property').delete().eq('property_id', propertyData.property_id);
       //   throw new Error(`Active listings insert failed: ${activeListingsError.message}`);
       // }
-      
 
       return {
         success: true,
-        listingId: result.listingId
+        listingId: result.listingId,
       };
-
     } catch (error) {
-      console.error('Listing upload failed:', error);
+      console.error("Listing upload failed:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
       };
     }
   };
 
   return { uploadListing };
-}; 
+};

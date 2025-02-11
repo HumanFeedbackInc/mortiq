@@ -1,4 +1,4 @@
-"use client"
+"use client";
 // import React, { useRef, useEffect, useState } from "react";
 // import mapboxgl, { LngLatLike, Map } from "mapbox-gl";
 // import "mapbox-gl/dist/mapbox-gl.css";
@@ -36,12 +36,7 @@
 //       zoom: 1,
 //       interactive: false,
 //       style:"mapbox://styles/cbizy/clqqynrao00lz01qxgk7t66rs"
-    
-      
 //     });
-
-    
-    
 //     // save the map object to React.useState
 //     setMap(mapboxMap);
 
@@ -50,18 +45,16 @@
 //     };
 //   }, []);
 
-
 //   useEffect(() => {
 //     // Call flyToLocation when the map is set (i.e., not null)
 //     if (map) {
-      
+
 //         flyToLocation();
-        
+
 //     }
 // }, [map]); // Dependency array includes 'map'
 
 // const flyToLocation = () => {
-
 
 //     const end = {
 //         center: {lng:latlng[0],lat:latlng[1]} as LngLatLike,
@@ -97,8 +90,6 @@
 //       }
 //     };
 
-    
-
 //   return (
 //     <div className={wrapperClassName}>
 //       {/* <link
@@ -118,27 +109,27 @@ import mapboxgl, { LngLatLike } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 export type MapProps = {
-    latlng: number[];
-    zoom: number;
-    wrapperClassName: string;
-}
-const Map = ({latlng, zoom, wrapperClassName}: MapProps) => {
-  const mapContainerRef = useRef(null);
+  latlng: number[];
+  zoom: number;
+  wrapperClassName: string;
+};
+const Map = ({ latlng, zoom, wrapperClassName }: MapProps) => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const [lng, setLng] = useState(latlng[0]);
   const [lt, setLt] = useState(latlng[1]);
-  const mlat = latlng[0].valueOf()
-  const mlng = latlng[1].valueOf()
-  console.log("mlng, mlat",mlng, mlat)
-  const popupRef = useRef(null);
+  const mlat = latlng[0].valueOf();
+  const mlng = latlng[1].valueOf();
+  console.log("mlng, mlat", mlng, mlat);
+  const popupRef = useRef<mapboxgl.Popup | null>(null);
 
   useEffect(() => {
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
     const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
+      container: mapContainerRef.current as HTMLDivElement,
       center: latlng as LngLatLike,
       zoom: 16,
-    //   style: 'mapbox://styles/mapbox/streets-v11'
+      //   style: 'mapbox://styles/mapbox/streets-v11'
     });
 
     // Create Street View URL
@@ -147,12 +138,11 @@ const Map = ({latlng, zoom, wrapperClassName}: MapProps) => {
     // Create popup with Street View link
     const popup = new mapboxgl.Popup({
       closeOnClick: false,
-      anchor: 'bottom',
+      anchor: "bottom",
       offset: [0, -10],
-      maxWidth: '300px'
-    })
-      .setLngLat(latlng as LngLatLike)
-      .setHTML(`
+      maxWidth: "300px",
+      focusAfterOpen: false,
+    }).setLngLat(latlng as LngLatLike).setHTML(`
         <div style="text-align: center;">
           <h3 style="margin-bottom: 8px;">Location</h3>
           <a href="${streetViewUrl}" target="_blank" rel="noopener noreferrer" 
@@ -166,12 +156,12 @@ const Map = ({latlng, zoom, wrapperClassName}: MapProps) => {
     popupRef.current = popup;
 
     // Add popup after map loads
-    map.on('load', () => {
+    map.on("load", () => {
       popup.addTo(map);
     });
 
     // Update popup position on move
-    map.on('move', () => {
+    map.on("move", () => {
       popup.setLngLat(latlng as LngLatLike);
     });
 
@@ -188,7 +178,10 @@ const Map = ({latlng, zoom, wrapperClassName}: MapProps) => {
       <div className="sidebar">
         Longitude: {lng} | Latitude: {lt} | Zoom: {zoom}
       </div>
-      <div className="map-container h-[500px] rounded-lg" ref={mapContainerRef} />
+      <div
+        className="map-container h-[500px] rounded-lg"
+        ref={mapContainerRef}
+      />
     </div>
   );
 };

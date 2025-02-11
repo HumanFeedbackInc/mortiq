@@ -1,13 +1,13 @@
 import { config } from 'dotenv';
 import { defineConfig } from 'drizzle-kit';
-
+import { drizzle } from 'drizzle-orm/node-postgres';
 config({ path: '.env' });
 
 export default defineConfig({
-  schema: '~/Users/connor/Dev/mortgageIQ/iteration1/mortiq/db/schema.ts',
+  schema: './drizzle/schema.ts',
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: process.env.DIRECT_DATABASE_URL!,
   },
 });

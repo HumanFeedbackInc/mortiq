@@ -1,6 +1,6 @@
-import type {Selection, SortDescriptor} from "@heroui/react";
-import {useCallback, useMemo, useState, useEffect} from "react";
-import type {Database} from "@/types/supabase";
+import type { Selection, SortDescriptor } from "@heroui/react";
+import { useCallback, useMemo, useState, useEffect } from "react";
+import type { Database } from "@/types/supabase";
 
 type Property = {
   listingDateActive: string;
@@ -20,7 +20,7 @@ type Property = {
   region: string;
   ltv: number;
   dateFunded: string;
-}
+};
 
 // Initialize the JS client
 // import { createClient } from '@supabase/supabase-js'
@@ -33,8 +33,12 @@ type Property = {
 
 export const useTableFilters = () => {
   const [filterValue, setFilterValue] = useState("");
-  const [amountRange, setAmountRange] = useState<[number, number]>([0, 10000000]);
-  const [interestRange, setInterestRange] = useState<[number, number]>([0, 100]);
+  const [amountRange, setAmountRange] = useState<[number, number]>([
+    0, 10000000,
+  ]);
+  const [interestRange, setInterestRange] = useState<[number, number]>([
+    0, 100,
+  ]);
   const [ltvRange, setLtvRange] = useState<[number, number]>([0, 100]);
   const [dateFilter, setDateFilter] = useState("all");
 
@@ -46,17 +50,24 @@ export const useTableFilters = () => {
       let allDates = dateFilter === "all";
 
       return (
-        (property.amount >= minAmount && property.amount <= maxAmount) &&
-        (property.interestRate >= minInterest && property.interestRate <= maxInterest) &&
-        (property.ltv >= minLtv && property.ltv <= maxLtv) &&
+        property.amount >= minAmount &&
+        property.amount <= maxAmount &&
+        property.interestRate >= minInterest &&
+        property.interestRate <= maxInterest &&
+        property.ltv >= minLtv &&
+        property.ltv <= maxLtv &&
         (allDates ||
           new Date(
             new Date().getTime() -
-              +(dateFilter.match(/(\d+)(?=Days)/)?.[0] ?? 0) * 24 * 60 * 60 * 1000,
+              +(dateFilter.match(/(\d+)(?=Days)/)?.[0] ?? 0) *
+                24 *
+                60 *
+                60 *
+                1000
           ) <= new Date(property.listingDateActive))
       );
     },
-    [dateFilter, amountRange, interestRange, ltvRange],
+    [dateFilter, amountRange, interestRange, ltvRange]
   );
 
   return {
@@ -74,7 +85,10 @@ export const useTableFilters = () => {
   };
 };
 
-export const useTableSelection = (filteredItems: Property[], filterValue: string) => {
+export const useTableSelection = (
+  filteredItems: Property[],
+  filterValue: string
+) => {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
 
   const filterSelectedKeys = useMemo(() => {
@@ -147,24 +161,27 @@ export const useTableSort = () => {
     direction: "ascending",
   });
 
-  const sortItems = useCallback((items: Property[]) => {
-    if (!items.length) return [];
-    
-    return [...items].sort((a: Property, b: Property) => {
-      const col = sortDescriptor.column as keyof Property;
-      
-      let first = a[col];
-      let second = b[col];
-      
-      if (typeof first !== 'number' && typeof second !== 'number') {
-        first = String(first);
-        second = String(second);
-      }
+  const sortItems = useCallback(
+    (items: Property[]) => {
+      if (!items.length) return [];
 
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor]);
+      return [...items].sort((a: Property, b: Property) => {
+        const col = sortDescriptor.column as keyof Property;
+
+        let first = a[col] as string | number;
+        let second = b[col] as string | number;
+
+        if (typeof first !== "number" && typeof second !== "number") {
+          first = String(first);
+          second = String(second);
+        }
+
+        const cmp = first < second ? -1 : first > second ? 1 : 0;
+        return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      });
+    },
+    [sortDescriptor]
+  );
 
   return {
     sortDescriptor,
@@ -175,21 +192,23 @@ export const useTableSort = () => {
 
 export const useListingTable = (listings: Property[]) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set([
-    "imgs",
-    "address",
-    "amount",
-    "interestRate",
-    "ltv",
-    "propertyType",
-    "region",
-    "estimatedFairMarketValue",
-    "dateFunded",
-    "term",
-    "mortgageType",
-    "listedDate",
-    "actions"
-  ]));
+  const [visibleColumns, setVisibleColumns] = useState<Selection>(
+    new Set([
+      "imgs",
+      "address",
+      "amount",
+      "interestRate",
+      "ltv",
+      "propertyType",
+      "region",
+      "estimatedFairMarketValue",
+      "dateFunded",
+      "term",
+      "mortgageType",
+      "listedDate",
+      "actions",
+    ])
+  );
 
   useEffect(() => {
     setIsLoading(false);
@@ -211,57 +230,47 @@ export const useListingTable = (listings: Property[]) => {
 
   const filteredItems = useMemo(() => {
     let filtered = [...listings];
-    console.log('Initial items:', filtered);
+    console.log("Initial items:", filtered);
 
     if (filterValue) {
       filtered = filtered.filter((property) => {
         const searchTerm = filterValue.toLowerCase();
-        const matches = Object.values(property).some(value => {
-          const stringValue = String(value || '').toLowerCase();
+        const matches = Object.values(property).some((value) => {
+          const stringValue = String(value || "").toLowerCase();
           return stringValue.includes(searchTerm);
         });
-        console.log('Search filter result:', { property, matches });
+        console.log("Search filter result:", { property, matches });
         return matches;
       });
     }
 
     filtered = filtered.filter(itemFilter);
-    console.log('After all filters:', filtered);
+    console.log("After all filters:", filtered);
 
     return filtered;
   }, [filterValue, itemFilter, listings]);
 
-  const {
-    selectedKeys,
-    filterSelectedKeys,
-    onSelectionChange,
-  } = useTableSelection(filteredItems, filterValue);
+  const { selectedKeys, filterSelectedKeys, onSelectionChange } =
+    useTableSelection(filteredItems, filterValue);
 
-  const {
-    page,
-    setPage,
-    pages,
-    items,
-    onNextPage,
-    onPreviousPage,
-  } = useTablePagination(filteredItems);
+  const { page, setPage, pages, items, onNextPage, onPreviousPage } =
+    useTablePagination(filteredItems);
 
-  const {
-    sortDescriptor,
-    setSortDescriptor,
-    sortItems,
-  } = useTableSort();
+  const { sortDescriptor, setSortDescriptor, sortItems } = useTableSort();
 
   const sortedItems = useMemo(() => sortItems(items), [items, sortItems]);
 
-  const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, [setFilterValue, setPage]);
+  const onSearchChange = useCallback(
+    (value?: string) => {
+      if (value) {
+        setFilterValue(value);
+        setPage(1);
+      } else {
+        setFilterValue("");
+      }
+    },
+    [setFilterValue, setPage]
+  );
 
   return {
     filterValue,
@@ -291,4 +300,4 @@ export const useListingTable = (listings: Property[]) => {
     visibleColumns,
     setVisibleColumns,
   };
-}; 
+};

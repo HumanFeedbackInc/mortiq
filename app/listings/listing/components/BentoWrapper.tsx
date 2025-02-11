@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+// import React, { useState, useRef, useEffect } from "react";
 import { LayoutGrid, Card } from "@/components/ui/bento";
 import { Database } from "@/types/supabase";
-import MapboxMap from "./Map";
-type Property = Database['public']['Tables']['properties']['Row'];
+// import MapboxMap from "./Map";
+// type Property = Database['public']['Tables']['properties']['Row'];
 
 
 export function BentoWrapper({ cards }: { cards: Card[] }) {

@@ -1,12 +1,12 @@
 "use client";
 
-import type {NavbarProps} from "@heroui/react";
-import {Avatar, AvatarGroup, AvatarIcon} from "@heroui/avatar";
+import type { NavbarProps } from "@heroui/react";
+import { Avatar } from "@heroui/avatar";
 export interface NavbarPropsWithUser extends NavbarProps {
   user: User | undefined | null;
 }
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -20,14 +20,16 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
-   DropdownItem
+  DropdownItem,
 } from "@heroui/react";
 
-import {AcmeIcon} from "./logo";
+import { AcmeIcon } from "./logo";
 import { usePathname } from "next/navigation";
+import { redirect } from "next/navigation";
+
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
-import { redirect } from "next/navigation";
+
 const menuItems = [
   "About",
   "Blog",
@@ -42,9 +44,10 @@ const menuItems = [
 export default function Component(props: NavbarPropsWithUser) {
   const pathname = usePathname();
   const { user } = props;
-  
+
   const handleSignOut = async () => {
     const supabase = createClient();
+
     await supabase.auth.signOut();
     window.location.href = "/sign-in";
   };
@@ -93,12 +96,18 @@ export default function Component(props: NavbarPropsWithUser) {
             Home
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/dashboard"} className="hidden md:flex">
+        <NavbarItem
+          isActive={pathname === "/dashboard"}
+          className="hidden md:flex"
+        >
           <Link className="text-default-500" href="/dashboard" size="sm">
             Dashboard
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/listings"} className="hidden md:flex">
+        <NavbarItem
+          isActive={pathname === "/listings"}
+          className="hidden md:flex"
+        >
           <Link className="text-default-500" href="/listings" size="sm">
             Listings
           </Link>
@@ -108,7 +117,10 @@ export default function Component(props: NavbarPropsWithUser) {
             About Us
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/integrations"} className="hidden md:flex">
+        <NavbarItem
+          isActive={pathname === "/integrations"}
+          className="hidden md:flex"
+        >
           <Link className="text-default-500" href="/integrations" size="sm">
             Integrations
           </Link>
@@ -117,20 +129,29 @@ export default function Component(props: NavbarPropsWithUser) {
           {user ? (
             <Dropdown>
               <DropdownTrigger>
-                <Avatar isBordered radius="full" src={user.user_metadata.avatar_url} >
-                </Avatar>
+                <Avatar
+                  isBordered
+                  radius="full"
+                  src={user.user_metadata.avatar_url}
+                />
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem key="profile">
                   <Link href="/profile">Profile</Link>
                 </DropdownItem>
                 <DropdownItem key="logout">
-                  <Button variant="flat" onPress={handleSignOut}>Logout</Button>
+                  <Button variant="flat" onPress={handleSignOut}>
+                    Logout
+                  </Button>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           ) : (
-            <Button radius="full" variant="flat" onPress={() => redirect("/sign-in")}>
+            <Button
+              radius="full"
+              variant="flat"
+              onPress={() => redirect("/sign-in")}
+            >
               Login
             </Button>
           )}
@@ -141,9 +162,9 @@ export default function Component(props: NavbarPropsWithUser) {
       <NavbarMenu
         className="top-[calc(var(--navbar-height)/2)] mx-auto mt-16 max-h-[40vh] max-w-[80vw] rounded-large border-small border-default-200/20 bg-background/60 py-6 shadow-medium backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50"
         motionProps={{
-          initial: {opacity: 0, y: -20},
-          animate: {opacity: 1, y: 0},
-          exit: {opacity: 0, y: -20},
+          initial: { opacity: 0, y: -20 },
+          animate: { opacity: 1, y: 0 },
+          exit: { opacity: 0, y: -20 },
           transition: {
             ease: "easeInOut",
             duration: 0.2,

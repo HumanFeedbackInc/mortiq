@@ -1,10 +1,16 @@
-import { pgTable, pgPolicy, bigserial, text, index, serial, numeric, integer, timestamp, varchar, date, foreignKey, uuid, unique, bigint, json, doublePrecision, boolean, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, pgPolicy, bigserial, text, index, serial, numeric, integer, timestamp, varchar, date, foreignKey, uuid, unique, bigint, doublePrecision, json, boolean, pgEnum, pgSchema } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
-// import { users } from "@/components/listingTable/data";
+// import { users } from "@/app/profile/components/team-data";
 
 export const accountStatusEnum = pgEnum("accountStatus", ['ACTIVE', 'PENDING', 'ARCHIVED', 'SUSPENDED', 'UNVERIFIED'])
 export const userRoleTypeEnum = pgEnum("user_role_type", ['ADMIN', 'BROKER', 'INVESTOR', 'BORROWER', 'SUPERADMIN', 'PENDING'])
 
+const authSchema = pgSchema('auth');
+export const users = authSchema.table("users", {
+	id: uuid("id").defaultRandom().primaryKey().notNull(),
+	email: text("email").notNull(),
+	phone: text("phone")
+});
 
 export const notes = pgTable("notes", {
 	id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
@@ -80,7 +86,7 @@ export const accountStatus = pgTable("account_status", {
 export const pendingUser = pgTable("pending_user", {
 	pendingUserId: uuid("pending_user_id").defaultRandom().primaryKey().notNull(),
 	userId: uuid("user_id").notNull(),
-	roleId: uuid("role_id").notNull(),
+	roleId: text("role_id").notNull(),
 	firstName: text("first_name").notNull(),
 	middleName: text("middle_name"),
 	lastName: text("last_name").notNull(),
@@ -106,12 +112,14 @@ export const account = pgTable("account", {
 	lastName: text("last_name").default('').notNull(),
 	profilePicture: text("profile_picture").default(''),
 	accountStatus: accountStatusEnum("account_status").default('PENDING'),
+	phone: text(),
 }, (table) => [
 	foreignKey({
 			columns: [table.userId],
 			foreignColumns: [users.id],
 			name: "account_user_id_fkey"
 		}),
+	unique("account_phone_key").on(table.phone),
 	pgPolicy("Allow authenticated users to select from account", { as: "permissive", for: "select", to: ["authenticated"], using: sql`true` }),
 	pgPolicy("Allow authenticated users to insert into account", { as: "permissive", for: "insert", to: ["authenticated"] }),
 	pgPolicy("Allow authenticated users to update account", { as: "permissive", for: "update", to: ["authenticated"] }),
@@ -199,14 +207,15 @@ export const activeListings = pgTable("active_listings", {
 export const property = pgTable("property", {
 	propertyId: uuid("property_id").defaultRandom().primaryKey().notNull(),
 	propertyType: text("property_type").default('').notNull(),
-	address: json().notNull(),
+	address: text().notNull(),
 	region: text().default('').notNull(),
 	ltv: doublePrecision().default(sql`'0'`).notNull(),
+	lat_long: text().default(''),
 	amount: doublePrecision().default(sql`'0'`).notNull(),
 	mortgageType: text("mortgage_type").default('').notNull(),
 	interestRate: doublePrecision("interest_rate").notNull(),
 	term: json().notNull(),
-	priorEncumbrances: json("prior_encumbrances").notNull(),
+	priorEncumbrances: text("prior_encumbrances").notNull(),
 	estimatedFairMarketValue: doublePrecision("estimated_fair_market_value").notNull(),
 	imgs: text().default('').notNull(),
 	summary: text().notNull(),

@@ -14,13 +14,13 @@ type KpiStatsProps = {
 
 export function KpiStats({ stats }: KpiStatsProps) {
   return (
-    <section className="group/container relative mx-auto w-full max-w-7xl overflow-hidden rounded-3xl">
-      <div className="relative z-20">
-        <div className="align-center mx-auto mt-8 grid max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2">
+    <section className="group/container relative mx-auto h-[300px] w-full max-w-7xl overflow-hidden">
+      <div className="relative z-20 h-full">
+        <div className="align-center mx-auto mt-8 grid h-full max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2">
           {stats.map((item, index) => (
             <motion.div
               initial={{
-                y: 20,
+                y: 0,
                 opacity: 0,
                 filter: "blur(4px)",
               }}
