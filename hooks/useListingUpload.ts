@@ -65,9 +65,9 @@ interface UploadResult {
 
 export const useListingUpload = () => {
   const uploadListing = async (
-    formData: ListingFormData,
-    documents: File[],
-    images: File[]
+    formData: ListingFormData
+    // documents: File[],
+    // images: File[]
   ): Promise<UploadResult> => {
     try {
       if (!formData.loanAmount) {
@@ -83,7 +83,7 @@ export const useListingUpload = () => {
         ltv: formData.ltv || 0,
       } as ListingData;
 
-      const result = await createListingAction(listingData, documents, images);
+      const result = await createListingAction(listingData);
       // // Check for active session first
       // const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 

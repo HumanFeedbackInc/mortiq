@@ -175,9 +175,9 @@ export const getPdfUrl = async (filePath: string) => {
 };
 
 export const createListingAction = async (
-  listingData: ListingData,
-  documents: File[],
-  images: File[]
+  listingData: ListingData
+  // documents: File[],
+  // images: File[]
 ) => {
   const supabase = await createClient();
   const listingId = uuidv4();
@@ -220,56 +220,56 @@ export const createListingAction = async (
   //   .createDir(privateFileBucketPath);
 
   // 1. Upload documents to private bucket
-  const documentPromises = documents.map(async (file) => {
-    const sanitizedFileName = file.name.replace(/\s+/g, "_");
-    const filePath = `${privateFileBucketPath}/${sanitizedFileName}`;
-    // console.log("filePath about to upload");
-    // console.log(filePath);
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from(privateFileBucket)
-      .upload(filePath, file);
+  // const documentPromises = documents.map(async (file) => {
+  //   const sanitizedFileName = file.name.replace(/\s+/g, "_");
+  //   const filePath = `${privateFileBucketPath}/${sanitizedFileName}`;
+  //   // console.log("filePath about to upload");
+  //   // console.log(filePath);
+  //   const { data: uploadData, error: uploadError } = await supabase.storage
+  //     .from(privateFileBucket)
+  //     .upload(filePath, file);
 
-    // console.log("fileFilePath");
-    // console.log(filePath);
-    // console.log("uploadData");
-    // console.log(uploadData);
-    if (uploadError) {
-      console.error("uploadFileError");
-      console.log(uploadError);
-      throw new Error(`Document upload failed: ${uploadError.message}`);
-    }
-    return filePath;
-  });
+  //   // console.log("fileFilePath");
+  //   // console.log(filePath);
+  //   // console.log("uploadData");
+  //   // console.log(uploadData);
+  //   if (uploadError) {
+  //     console.error("uploadFileError");
+  //     console.log(uploadError);
+  //     throw new Error(`Document upload failed: ${uploadError.message}`);
+  //   }
+  //   return filePath;
+  // });
 
   // 2. Upload images to public bucket
-  const imagePromises = images.map(async (file) => {
-    // Sanitize filename by replacing spaces with underscores
-    const sanitizedFileName = file.name.replace(/\s+/g, "_");
-    const filePath = `${imageBucketPath}/${sanitizedFileName}`;
+  // const imagePromises = images.map(async (file) => {
+  //   // Sanitize filename by replacing spaces with underscores
+  //   const sanitizedFileName = file.name.replace(/\s+/g, "_");
+  //   const filePath = `${imageBucketPath}/${sanitizedFileName}`;
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from(imageBucket)
-      .upload(filePath, file);
+  //   const { data: uploadData, error: uploadError } = await supabase.storage
+  //     .from(imageBucket)
+  //     .upload(filePath, file);
 
-    console.log("uploadData");
-    console.log(uploadData);
-    if (uploadError) {
-      console.error("uploadError");
-      console.log(uploadError);
-      throw new Error(`Image upload failed: ${uploadError.message}`);
-    }
-    return filePath;
-  });
+  //   console.log("uploadData");
+  //   console.log(uploadData);
+  //   if (uploadError) {
+  //     console.error("uploadError");
+  //     console.log(uploadError);
+  //     throw new Error(`Image upload failed: ${uploadError.message}`);
+  //   }
+  //   return filePath;
+  // });
 
   // Wait for all uploads to complete
-  const [documentPaths, imagePaths] = await Promise.all([
-    Promise.all(documentPromises),
-    Promise.all(imagePromises),
-  ]);
-  console.log("documentPaths");
-  console.log(documentPaths);
-  console.log("imagePaths");
-  console.log(imagePaths);
+  // const [documentPaths, imagePaths] = await Promise.all([
+  //   Promise.all(documentPromises),
+  //   Promise.all(imagePromises),
+  // ]);
+  // console.log("documentPaths");
+  // console.log(documentPaths);
+  // console.log("imagePaths");
+  // console.log(imagePaths);
 
   const propertyDataInsert: Database["public"]["Tables"]["property"]["Insert"] =
     {
