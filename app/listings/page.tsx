@@ -1,10 +1,13 @@
 // import { getPosts } from '@/lib/posts'
 // import { Post } from '@/ui/post'
 import ListingTable from "@/components/listingTable/ListingTable";
-import {getListings} from "../actions";
+// import PendingPropertiesTable from "../dashboard/components/pendingProperties/pendingTable";
+
+import { getListings } from "../actions";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-const PUBLIC_BUCKET_URL = "https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages/"
+const PUBLIC_BUCKET_URL =
+  "https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages/";
 // import { SearchOptions } from "@supabase/supabase-js";
 interface Listing {
   listingDateActive: string;
@@ -31,13 +34,16 @@ interface ListingWithImages extends Listing {
 }
 
 export default async function Page() {
-//   const posts = await getPosts()
+  //   const posts = await getPosts()
 
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (error || !user) {
-    redirect('/sign-in');
+    redirect("/sign-in");
   }
   const listings = (await getListings()) as Listing[];
   //Get list of imgs from supabase storage
@@ -46,8 +52,8 @@ export default async function Page() {
   for (const l of listings) {
     const listingWithImage: ListingWithImages = {
       ...l,
-      imgUrls: []
-    }
+      imgUrls: [],
+    };
     if (!listingWithImage.imgUrls) {
       listingWithImage.imgUrls = [];
     }
@@ -56,60 +62,55 @@ export default async function Page() {
     //   path: "adf/"
     // );
     let { data: files, error: filesError } = await supabase.storage
-    .from("propertyImages")
-    .list(
-      imgPath
-    )
+      .from("propertyImages")
+      .list(imgPath);
     if (filesError || !files) {
-      console.log("ERROR GETTING FILES")
-      console.log(filesError)
-      throw new Error("Error getting images")
+      console.log("ERROR GETTING FILES");
+      console.log(filesError);
+      throw new Error("Error getting images");
     }
     // https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages/listings/12c168ad-ed92-4bd0-b099-403dec3b92e0/images/Screenshot_2025-01-31_at_6.06.59_PM.png
     for (const f of files) {
-      console.log("FILE")
+      console.log("FILE");
       console.log(f);
-      console.log("LISTING IMGS")
-      console.log(l.imgs)
-
+      console.log("LISTING IMGS");
+      console.log(l.imgs);
 
       const imgurl = PUBLIC_BUCKET_URL + l.imgs + "/" + f.name;
-      console.log("IMG URL")
-      console.log(imgurl)
+      console.log("IMG URL");
+      console.log(imgurl);
       listingWithImage.imgUrls.push(imgurl);
     }
 
-    listingsWithImages.push(listingWithImage)
+    listingsWithImages.push(listingWithImage);
     // console.log("FILES FOR IMG PATH ", imgPath)
     // console.log(files);
-    console.log("LISTING WITH IMAGE")
-    console.log(listingWithImage)
+    console.log("LISTING WITH IMAGE");
+    console.log(listingWithImage);
 
-    console.log("LISTINGS WITH IMAGES")
+    console.log("LISTINGS WITH IMAGES");
     console.log(listingsWithImages);
   }
   // console.log("FILES")
   // console.log(files);
- 
-  //Iterate through files, get url for each file, add to ListingWithImages array 
+
+  //Iterate through files, get url for each file, add to ListingWithImages array
   // console.log("LISTINGS WITH IMAGES")
   // console.log(listingsWithImages);
-
 
   // const { data: { publicUrl } } = supabase.storage.from('propertyImages').getPublicUrl(listings[0].imgs);
   // console.log(publicUrl);
   // console.log(listings);
-  
 
-  // Pull images 
+  // Pull images
   return (
     <div>
-        <ListingTable listings={listingsWithImages || []} />
+      <ListingTable listings={listingsWithImages || []} />
     </div>
     // <ul>
     //   {posts.map((post) => (
     //     <Post key={post.id} post={post} />
     //   ))}
     // </ul>
-  )
+  );
 }

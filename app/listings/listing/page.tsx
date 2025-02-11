@@ -184,7 +184,15 @@ export default async function ListingPage({
             <PDFViewer filePath={`listings/${propertyId}/documents/`} />
           </div>
 
-          <ContactMe />
+          <ContactMe
+            address={listing.address}
+            amount={listing.amount}
+            interest_rate={listing.interestRate}
+            ltv={listing.ltv}
+            prior_encumbrances={listing.priorEncumbrances}
+            term={listing.term}
+            mortgage_type={listing.mortgageType}
+          />
         </div>
       </ListingLayout>
     );

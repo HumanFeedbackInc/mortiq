@@ -10,7 +10,7 @@ import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/ui/navbar";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-
+import { getUserAccountData, UserAccountDataResult } from "./actions";
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -34,25 +34,34 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.getUser()
+  const { data, error } = await supabase.auth.getUser();
   // if (error || !data?.user) {
   //   redirect('/sign-in')
   // }
+  //get account data
+  const accountDataResult: UserAccountDataResult = await getUserAccountData(
+    data?.user?.id || ""
+  );
+  let profilePicture = null;
+  if (accountDataResult.success) {
+    profilePicture = accountDataResult.data?.profilePicture;
+  }
+
   return (
     <html suppressHydrationWarning lang="en">
       <head />
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
+          fontSans.variable
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
-            <Navbar user={data?.user} />
-            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+            <Navbar user={data?.user} profilepicture={profilePicture || ""} />
+            <main className="container mx-auto pt-16 flex-grow">
               {children}
             </main>
             {/* <footer className="w-full flex items-center justify-center py-3">

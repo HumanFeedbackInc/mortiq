@@ -4,6 +4,7 @@ import type { NavbarProps } from "@heroui/react";
 import { Avatar } from "@heroui/avatar";
 export interface NavbarPropsWithUser extends NavbarProps {
   user: User | undefined | null;
+  profilepicture: string | null;
 }
 
 import React from "react";
@@ -43,7 +44,7 @@ const menuItems = [
 
 export default function Component(props: NavbarPropsWithUser) {
   const pathname = usePathname();
-  const { user } = props;
+  const { user, profilepicture } = props;
 
   const handleSignOut = async () => {
     const supabase = createClient();
@@ -129,11 +130,7 @@ export default function Component(props: NavbarPropsWithUser) {
           {user ? (
             <Dropdown>
               <DropdownTrigger>
-                <Avatar
-                  isBordered
-                  radius="full"
-                  src={user.user_metadata.avatar_url}
-                />
+                <Avatar isBordered radius="full" src={profilepicture || ""} />
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem key="profile">

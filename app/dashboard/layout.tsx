@@ -1,17 +1,17 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Admin Dashboard',
-  description: 'Admin dashboard for managing application data',
-}
+  title: "Admin Dashboard",
+  description: "Admin dashboard for managing application data",
+};
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="min-h-screen">
@@ -25,15 +25,13 @@ export default function DashboardLayout({
         <main className="flex-1">
           {/* Header */}
           {/* <header className="h-16 border-b px-4 flex items-center"> */}
-            {/* Add header content */}
+          {/* Add header content */}
           {/* </header> */}
 
           {/* Page content */}
-          <div className="p-6">
-            {children}
-          </div>
+          <div>{children}</div>
         </main>
       </div>
     </div>
-  )
+  );
 }

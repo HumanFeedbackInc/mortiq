@@ -41,8 +41,13 @@ export default async function ProfilePage() {
   if (userAccountDataResult.success) {
     userData = userAccountDataResult.data;
   } else {
+    console.log("userAccountDataResult");
+    console.log(userAccountDataResult);
     userData = null;
   }
+
+  console.log("\n\n==============userData==============");
+  console.log(userData);
 
   //check if user is in pendingUser table
   if (userData === null) {
@@ -53,12 +58,17 @@ export default async function ProfilePage() {
       pendingUserData = null;
     }
   }
+  console.log("\n\n==============pendingUserData==============");
+  console.log(pendingUserData);
 
   const dashboardUserData: DashboardUserData = {
     userData: userData,
     pendingUserData: pendingUserData,
     user: user,
   };
+
+  console.log("\n\n==============dashboardUserData==============");
+  console.log(dashboardUserData);
 
   console.log("\n\nuserData");
   // const userDataArray = Object.values(userData)

@@ -18,7 +18,7 @@ import {
   userRoles,
   users,
 } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import {
   PendingUserData,
   UserData,
@@ -339,37 +339,47 @@ export const createListingAction = async (
   }
 
   // 4. Create active listings record in database
-  const activeListingsDataInsert: Database["public"]["Tables"]["active_listings"]["Insert"] =
-    {
-      listing_id: listingsDataResult.listing_id || "",
-      listing_date_active: timestamp,
-    };
+  // const activeListingsDataInsert: Database["public"]["Tables"]["active_listings"]["Insert"] =
+  //   {
+  //     listing_id: listingsDataResult.listing_id || "",
+  //     listing_date_active: timestamp,
+  //   };
 
-  const { data: activeListingsData, error: activeListingsError } =
-    await supabase
-      .from("active_listings")
-      .insert(activeListingsDataInsert)
-      .select<"*", Database["public"]["Tables"]["active_listings"]["Row"]>("*")
-      .single();
+  // const { data: activeListingsData, error: activeListingsError } =
+  //   await supabase
+  //     .from("active_listings")
+  //     .insert(activeListingsDataInsert)
+  //     .select<"*", Database["public"]["Tables"]["active_listings"]["Row"]>("*")
+  //     .single();
 
-  if (activeListingsError) {
-    await supabase
-      .from("listings")
-      .delete()
-      .eq("listing_id", listingsDataResult.listing_id);
-    await supabase
-      .from("property")
-      .delete()
-      .eq("property_id", propertyData.property_id);
-    throw new Error(
-      `Active listings insert failed: ${activeListingsError.message}`
-    );
-  }
+  // if (activeListingsError) {
+  //   await supabase
+  //     .from("listings")
+  //     .delete()
+  //     .eq("listing_id", listingsDataResult.listing_id);
+  //   await supabase
+  //     .from("property")
+  //     .delete()
+  //     .eq("property_id", propertyData.property_id);
+  //   throw new Error(
+  //     `Active listings insert failed: ${activeListingsError.message}`
+  //   );
+  // }
 
   return {
     success: true,
     listingId,
   };
+};
+
+export const inviteUser = async (email: string) => {
+  const supabase = await createClient();
+  const origin = (await headers()).get("origin");
+  // Redirect invited users to the set-password page once they confirm their email.
+  const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
+    redirectTo: `${origin}/auth/callback?redirect_to=/set-password`,
+  });
+  return data;
 };
 
 export const signUpAction = async (formData: FormData) => {
@@ -553,6 +563,48 @@ export const getListings = async () => {
   return res;
 };
 
+export const approveListing = async (listingId: string) => {
+  //insert listingid into the approved_listings table
+  const res = await db
+    .insert(activeListings)
+    .values({ listingId, listingDateActive: new Date().toISOString() })
+    .execute();
+  return res;
+};
+
+export const getPendingProperties = async () => {
+  const res = await db
+    .select({
+      // Listing fields
+      listingId: listings.listingId,
+      listedDate: listings.listedDate,
+      // Property fields
+      propertyId: property.propertyId,
+      address: property.address,
+      amount: property.amount,
+      interestRate: property.interestRate,
+      estimatedFairMarketValue: property.estimatedFairMarketValue,
+      propertyType: property.propertyType,
+      imgs: property.imgs,
+      privateDocs: property.privateDocs,
+      mortgageType: property.mortgageType,
+      priorEncumbrances: property.priorEncumbrances,
+      term: property.term,
+      region: property.region,
+      ltv: property.ltv,
+      dateFunded: property.dateFunded,
+    })
+    .from(listings)
+    .innerJoin(property, eq(listings.propertyId, property.propertyId))
+    .leftJoin(activeListings, eq(listings.listingId, activeListings.listingId))
+    .where(isNull(activeListings.listingId))
+    .execute();
+
+  console.log("\n\n\nres================================");
+  console.log(res);
+  return res;
+};
+
 export type UserAccountDataResult =
   | { success: true; data: UserData }
   | { success: false; error: string };
@@ -617,7 +669,8 @@ export const getPendingUser = async (
   const pendingUserInfo = res[0];
   const pendingUserObject: PendingUserData = {
     email: pendingUserInfo.users.email,
-    phoneNumber: pendingUserInfo.users.phone,
+    phone: pendingUserInfo.pending_user.phone,
+    phoneNumber: pendingUserInfo.pending_user.phone,
     firstName: pendingUserInfo.pending_user.firstName,
     lastName: pendingUserInfo.pending_user.lastName,
     role: pendingUserInfo.pending_user.roleId,
@@ -627,7 +680,7 @@ export const getPendingUser = async (
     middleName: pendingUserInfo.pending_user.middleName,
     roleId: pendingUserInfo.pending_user.roleId,
     profilePicture: pendingUserInfo.pending_user.profilePicture,
-    createdAt: pendingUserInfo.pending_user.createdAt,
+    // createdAt: pendingUserInfo.pending_user.createdAt,
     userId: pendingUserInfo.pending_user.userId,
   };
   return { success: true, data: pendingUserObject };
@@ -636,6 +689,8 @@ export const getPendingUser = async (
 export const createOrUpdatePendingUser = async (
   pendingUserData: PendingUserData
 ) => {
+  console.log("\n\n==============createOrUpdatePendingUser==============");
+  console.log(pendingUserData);
   //Check if the private file bucket path exists
   const supabase = await createClient();
   const {
@@ -662,18 +717,24 @@ export const createOrUpdatePendingUser = async (
   pendingUserData.imageBucketPath = imageBucketPath;
 
   //check if the user exists in the pending_user table
-  const { data: pendingUserDataExists, error: pendingUserError } =
-    await supabase
-      .from("pending_user")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+  // const { data: pendingUserDataExists, error: pendingUserError } =
+  //   await supabase
+  //     .from("pending_user")
+  //     .select("pending_user_id")
+  //     .eq("user_id", userId)
+  //     .single();
+  const res = await db
+    .select()
+    .from(pendingUser)
+    .where(eq(pendingUser.userId, userId))
+    .execute();
 
-  if (pendingUserError) {
-    console.error(pendingUserError);
+  if (res.length === 0) {
+    console.log("\n\n==============pendingUserError==============");
+    console.error(res);
   }
 
-  if (pendingUserDataExists) {
+  if (res.length > 0) {
     //update the pending user data
     const { data: pendingUserDataUpdate, error: pendingUserDataUpdateError } =
       await supabase
@@ -690,20 +751,39 @@ export const createOrUpdatePendingUser = async (
 
     return { success: true, data: pendingUserDataUpdate };
   }
+  console.log("\n\n==============create the pending user data==============");
   //create the pending user data
-  const { data: pendingUserDataCreate, error: pendingUserDataCreateError } =
-    await supabase
-      .from("pending_user")
-      .insert(pendingUserData)
-      .select("*")
-      .single();
+  // const { data: pendingUserDataCreate, error: pendingUserDataCreateError } =
+  //   await supabase
+  //     .from("pending_user")
+  //     .insert({
+  //       userId: userId,
+  //       roleId: pendingUserData.roleId,
+  //       firstName: pendingUserData.firstName,
+  //       lastName: pendingUserData.lastName,
+  //       middleName: pendingUserData.middleName,
+  //       phone: pendingUserData.phoneNumber,
+  //     })
+  //     .select("*")
+  //     .single();
 
-  if (pendingUserDataCreateError) {
-    console.error(pendingUserDataCreateError);
-    return { success: false, error: pendingUserDataCreateError.message };
+  const res1 = await db
+    .insert(pendingUser)
+    .values({
+      userId: userId,
+      roleId: pendingUserData.roleId,
+      firstName: pendingUserData.firstName,
+      lastName: pendingUserData.lastName,
+      middleName: pendingUserData.middleName,
+      phone: pendingUserData.phoneNumber,
+    })
+    .execute();
+
+  if (res.length === 0) {
+    console.error(res);
   }
 
-  return { success: true, data: pendingUserDataCreate };
+  return { success: true, data: res1 };
 };
 
 export const UpdateUser = async (userData: PendingUserData) => {
@@ -786,4 +866,104 @@ export const uploadFileToPrivateBucket = async (
     console.error(uploadError);
     return { success: false, error: uploadError.message };
   }
+};
+
+// export const getListVjings = async () => {
+//   const res = await db
+//     .select()
+//     .from(listings)
+//     .execute();
+//   return res;
+// };
+
+export const setPasswordAction = async (formData: FormData) => {
+  const supabase = await createClient();
+  const password = formData.get("password")?.toString();
+  const confirmPassword = formData.get("confirmPassword")?.toString();
+
+  if (!password || !confirmPassword) {
+    return encodedRedirect(
+      "error",
+      "/set-password",
+      "Password and confirm password are required"
+    );
+  }
+
+  if (password !== confirmPassword) {
+    return encodedRedirect("error", "/set-password", "Passwords do not match");
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    return encodedRedirect("error", "/set-password", "Password update failed");
+  }
+
+  return encodedRedirect(
+    "success",
+    "/login",
+    "Password set successfully. Please log in."
+  );
+};
+
+export const approvePendingUser = async (pendingUserData: PendingUserData) => {
+  const supabase = await createClient();
+  //insert into account table
+  // const { data: accountData, error: accountError } = await supabase
+  //   .from("account")
+  //   .insert({
+  //     userId: pendingUserData.userId,
+  //     // roleId: pendingUserData.roleId,
+  //     firstName: pendingUserData.firstName,
+  //     lastName: pendingUserData.lastName,
+  //     middleName: pendingUserData.middleName,
+  //     phone: pendingUserData.phoneNumber,
+  //     profilePicture: pendingUserData.profilePicture,
+  //   })
+  //   .select("*")
+  //   .single();
+  const accountPayload = {
+    userId: pendingUserData.userId,
+    firstName: pendingUserData.firstName,
+    lastName: pendingUserData.lastName,
+    middleName: pendingUserData.middleName,
+    phone: pendingUserData.phone || pendingUserData.phoneNumber,
+    accountStatus: "ACTIVE",
+    profilePicture: pendingUserData.profilePicture,
+  };
+
+  //insert into user_roles table
+  const userRolesPayload = {
+    userId: accountPayload.userId,
+    roleId: 4,
+  };
+  const roleRes = await db.insert(userRoles).values(userRolesPayload).execute();
+  console.log("roleRes");
+  console.log(roleRes);
+
+  const res = await db
+    .insert(account)
+    .values({
+      userId: accountPayload.userId,
+      firstName: accountPayload.firstName,
+      lastName: accountPayload.lastName,
+      middleName: accountPayload.middleName,
+      phone: accountPayload.phone,
+      accountStatus: "ACTIVE",
+      profilePicture: accountPayload.profilePicture,
+    })
+    .execute();
+  console.log("res");
+  console.log(res);
+  //remove from pending_user table
+  const { data: pendingUserDataDelete, error: pendingUserDataDeleteError } =
+    await supabase
+      .from("pending_user")
+      .delete()
+      .eq("user_id", pendingUserData.userId);
+
+  if (pendingUserDataDeleteError) {
+    console.error(pendingUserDataDeleteError);
+    return { success: false, error: pendingUserDataDeleteError.message };
+  }
+  return { success: true, data: pendingUserDataDelete };
 };

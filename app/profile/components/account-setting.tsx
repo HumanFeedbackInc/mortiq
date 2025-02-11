@@ -261,10 +261,18 @@ const AccountSetting = React.forwardRef<
     }
   }, [previewUrl]);
 
+  //console log the formData
+  console.log("\n\n==============formData==============");
+  console.log(formData);
+  console.log(formData.phoneNumber);
+  console.log("\n\n==============pendingUserData==============");
+  console.log(dashboardUserData.pendingUserData);
+  console.log(dashboardUserData.pendingUserData?.phoneNumber);
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log("\n\n==============handleSubmit 1==============");
     // Validate phone number
     const phoneError = validatePhoneNumber(formData.phoneNumber)
       ? ""
@@ -286,9 +294,10 @@ const AccountSetting = React.forwardRef<
     if (phoneError || emailError) {
       return; // Don't submit if there are validation errors
     }
-
+    console.log("\n\n==============handleSubmit 3==============");
     try {
       // Create form data for submission
+      console.log("\n\n==============handleSubmit==============");
       const submitData: PendingUserData = {
         userId:
           dashboardUserData.userData?.userId ||
@@ -313,7 +322,8 @@ const AccountSetting = React.forwardRef<
           "",
         pendingUserId: dashboardUserData.pendingUserData?.pendingUserId || "",
         roleId: dashboardUserData.pendingUserData?.roleId || "",
-        createdAt: dashboardUserData.pendingUserData?.createdAt || "",
+        phone: dashboardUserData.pendingUserData?.phone || "",
+        // createdAt: dashboardUserData.pendingUserData?.createdAt || "",
         // Spread formData last to ensure it takes precedence
         ...formData,
       };
@@ -369,9 +379,15 @@ const AccountSetting = React.forwardRef<
       }
 
       let result;
+      console.log("\n\n==============handleSubmit 2==============");
       if (dashboardUserData.userData) {
+        console.log("\n\n==============UpdateUser==============");
         result = await UpdateUser(submitData);
       } else {
+        console.log(
+          "\n\n==============createOrUpdatePendingUser=============="
+        );
+        console.log("submitData", submitData);
         result = await createOrUpdatePendingUser(submitData);
       }
 
@@ -384,7 +400,10 @@ const AccountSetting = React.forwardRef<
       console.error("Error submitting form:", error);
     }
   };
-
+  //console log the formData
+  console.log("\n\n==============formData==============");
+  console.log(formData);
+  console.log(formData.phoneNumber);
   return (
     <form onSubmit={handleSubmit}>
       <div ref={ref} className={cn("p-2", className)} {...props}>

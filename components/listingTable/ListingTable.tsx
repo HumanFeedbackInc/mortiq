@@ -40,7 +40,6 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
 
-
 import { useMemoizedCallback } from "./use-memoized-callback";
 import { useListingTable } from "./useListingTable";
 // import {columns} from "./data";
@@ -157,6 +156,21 @@ export default function Component({
   const getMemberInfoProps = useMemoizedCallback(() => ({
     onClick: handleMemberClick,
   }));
+
+  const handleSelectedAction = useMemoizedCallback((action: string) => {
+    const selectedRows =
+      filterSelectedKeys === "all"
+        ? sortedItems
+        : sortedItems.filter((item) => filterSelectedKeys.has(item.listingId));
+
+    console.log(`Action "${action}" invoked on selected rows:`, selectedRows);
+    // TODO: Execute your approval/rejection logic here.
+    if (action === "approve") {
+      console.log("Approving selected rows:", selectedRows);
+    } else if (action === "reject") {
+      console.log("Rejecting selected rows:", selectedRows);
+    }
+  });
 
   const renderCell = (
     item: ListingTableProps["listings"][0],
@@ -511,10 +525,18 @@ export default function Component({
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="Selected Actions">
-                    <DropdownItem key="send-email">Send email</DropdownItem>
-                    <DropdownItem key="pay-invoices">Pay invoices</DropdownItem>
-                    <DropdownItem key="bulk-edit">Bulk edit</DropdownItem>
-                    <DropdownItem key="end-contract">End contract</DropdownItem>
+                    <DropdownItem
+                      key="approve"
+                      onPress={() => handleSelectedAction("approve")}
+                    >
+                      Approve
+                    </DropdownItem>
+                    <DropdownItem
+                      key="reject"
+                      onPress={() => handleSelectedAction("reject")}
+                    >
+                      Reject
+                    </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               )}
@@ -660,8 +682,8 @@ export default function Component({
               {(columnKey) => (
                 <TableCell>
                   {isColumnVisible(columnKey.toString())
-                    // @ts-ignore
-                    ? renderCell(item, columnKey)
+                    ? // @ts-ignore
+                      renderCell(item, columnKey)
                     : null}
                 </TableCell>
               )}
