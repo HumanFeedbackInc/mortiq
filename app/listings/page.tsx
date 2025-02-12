@@ -6,9 +6,14 @@ import ListingTable from "@/components/listingTable/ListingTable";
 import { getListings } from "../actions";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import GridView from "./gridcomponents/GridView";
+import ListingsTabs from "./ListingsTabs";
+// import { SearchOptions } from "@supabase/supabase-js";
+
+// Re-add the PUBLIC_BUCKET_URL constant so it's in scope for usage below.
 const PUBLIC_BUCKET_URL =
   "https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages/";
-// import { SearchOptions } from "@supabase/supabase-js";
+
 interface Listing {
   listingDateActive: string;
   listingId: string;
@@ -65,8 +70,7 @@ export default async function Page() {
       .from("propertyImages")
       .list(imgPath);
     if (filesError || !files) {
-      console.log("ERROR GETTING FILES");
-      console.log(filesError);
+      console.log("ERROR GETTING FILES", filesError);
       throw new Error("Error getting images");
     }
     // https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages/listings/12c168ad-ed92-4bd0-b099-403dec3b92e0/images/Screenshot_2025-01-31_at_6.06.59_PM.png
@@ -85,11 +89,7 @@ export default async function Page() {
     listingsWithImages.push(listingWithImage);
     // console.log("FILES FOR IMG PATH ", imgPath)
     // console.log(files);
-    console.log("LISTING WITH IMAGE");
-    console.log(listingWithImage);
-
-    console.log("LISTINGS WITH IMAGES");
-    console.log(listingsWithImages);
+    console.log("Processed listing", listingWithImage);
   }
   // console.log("FILES")
   // console.log(files);
@@ -105,7 +105,7 @@ export default async function Page() {
   // Pull images
   return (
     <div>
-      <ListingTable listings={listingsWithImages || []} />
+      <ListingsTabs listings={listingsWithImages || []} />
     </div>
     // <ul>
     //   {posts.map((post) => (
