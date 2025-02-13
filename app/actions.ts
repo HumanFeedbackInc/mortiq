@@ -374,7 +374,10 @@ export const createListingAction = async (
         listingData.fullAddressDetails?.latitude +
         "," +
         listingData.fullAddressDetails?.longitude,
-      prior_encumbrances: listingData.priorEncumbrances || 0,
+      prior_encumbrances: {
+        amount: listingData.priorEncumbrances || 0,
+        with: listingData.priorEncumbrancesWith || "",
+      },
       term: JSON.stringify({
         term: listingData.term,
         interest_rate: listingData.interestRate,

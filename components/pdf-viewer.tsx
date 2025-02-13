@@ -30,6 +30,7 @@ export default function PDFViewer({ filePath }: { filePath: string }) {
   const [width, setWidth] = useState(window.innerWidth * 0.9);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const nodeRef = React.useRef(null);
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
   useEffect(() => {
     const fetchPdfUrl = async () => {
@@ -77,12 +78,14 @@ export default function PDFViewer({ filePath }: { filePath: string }) {
   // }
   function nextPage() {
     if (pageNumber < numPages) {
-      setPageNumber((v) => ++v);
+      setIsPageLoading(true);
+      setPageNumber(pageNumber + 1);
     }
   }
   function prevPage() {
     if (pageNumber > 1) {
-      setPageNumber((v) => --v);
+      setIsPageLoading(true);
+      setPageNumber(pageNumber - 1);
     }
   }
 
@@ -218,15 +221,24 @@ export default function PDFViewer({ filePath }: { filePath: string }) {
               file={pdfUrl}
               onLoadSuccess={onDocumentLoadSuccess}
               className="flex justify-center"
+              loading={
+                <div className="h-[800px] w-full flex items-center justify-center">
+                  <div className="animate-pulse bg-gray-200 rounded-lg w-[595px] h-[842px]" />
+                </div>
+              }
             >
               <Draggable
                 nodeRef={nodeRef}
                 position={position}
                 onDrag={handleDrag}
                 disabled={width !== null}
-                // bounds={null}
               >
-                <div ref={nodeRef}>
+                <div ref={nodeRef} className="min-h-[800px] relative">
+                  {isPageLoading && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center">
+                      <div className="animate-pulse bg-gray-200 rounded-lg w-full h-full" />
+                    </div>
+                  )}
                   <Page
                     pageNumber={pageNumber}
                     width={width}
@@ -234,6 +246,9 @@ export default function PDFViewer({ filePath }: { filePath: string }) {
                     className="max-w-full cursor-move"
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
+                    loading={null}
+                    onLoadSuccess={() => setIsPageLoading(false)}
+                    onRenderError={() => setIsPageLoading(false)}
                   />
                 </div>
               </Draggable>

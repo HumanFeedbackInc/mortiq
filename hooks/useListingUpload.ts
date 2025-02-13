@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-interface ListingData {
+export interface ListingData {
   // Loan Details
   loanAmount: number;
   mortgageType: string;
@@ -65,23 +65,24 @@ interface UploadResult {
 
 export const useListingUpload = () => {
   const uploadListing = async (
-    formData: ListingFormData
+    listingData: ListingData
     // documents: File[],
     // images: File[]
   ): Promise<UploadResult> => {
     try {
-      if (!formData.loanAmount) {
-        throw new Error("Loan amount is required");
-      }
+      // if (!formData.loanAmount) {
+      //   throw new Error("Loan amount is required");
+      // }
 
-      const listingData: ListingData = {
-        ...formData,
-        loanAmount: formData.loanAmount,
-        mortgageType: formData.mortgageType || "",
-        interestRate: formData.interestRate || 0,
-        term: formData.term || "",
-        ltv: formData.ltv || 0,
-      } as ListingData;
+      // const listingData: ListingData = {
+      //   // ...formData,a=
+      //   fullAddressDetails: formData.fullAddressDetails,
+      //   loanAmount: formData.loanAmount,
+      //   mortgageType: formData.mortgageType || "",
+      //   interestRate: formData.interestRate || 0,
+      //   term: formData.term || "",
+      //   ltv: formData.ltv || 0,
+      // } as ListingData;
 
       const result = await createListingAction(listingData);
       // // Check for active session first
@@ -204,7 +205,7 @@ export const useListingUpload = () => {
       //Failing here
       console.error("Listing upload failed:", error);
       console.error("PAYLOAD");
-      console.error(formData);
+      console.error(listingData);
       return {
         success: false,
         error:

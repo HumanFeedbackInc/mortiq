@@ -125,7 +125,10 @@ export default async function ListingPage({
       parseFloat(listing?.lat_long?.split(",")[0] || "0"),
     ];
 
-    const priorEAmount = listing.priorEncumbrances.split(",")[0];
+    const priorE = listing.priorEncumbrances as {
+      amount: number;
+      with: string;
+    };
 
     return (
       <ListingLayout>
@@ -203,12 +206,8 @@ export default async function ListingPage({
                   {
                     description:
                       "Prior Encomberance" +
-                      (listing.priorEncumbrances
-                        ? ` with ${listing.priorEncumbrances.split(",")[1]}`
-                        : ""),
-                    value: listing.priorEncumbrances
-                      ? parseFloat(listing.priorEncumbrances.split(",")[0])
-                      : 0,
+                      (listing.priorEncumbrances ? ` with ${priorE.with}` : ""),
+                    value: listing.priorEncumbrances ? priorE.amount : 0,
                     subtext: "Prior Encomberance",
                   },
                 ]}
@@ -225,7 +224,7 @@ export default async function ListingPage({
             amount={listing.amount}
             interest_rate={listing.interestRate}
             ltv={listing.ltv}
-            prior_encumbrances={listing.priorEncumbrances}
+            prior_encumbrances={`${priorE.amount} with ${priorE.with}`}
             term={listing.term}
             mortgage_type={listing.mortgageType}
           />

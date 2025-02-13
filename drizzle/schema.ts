@@ -543,7 +543,7 @@ export const property = pgTable(
     mortgageType: text("mortgage_type").default("").notNull(),
     interestRate: doublePrecision("interest_rate").notNull(),
     term: json().notNull(),
-    priorEncumbrances: text("prior_encumbrances").notNull(),
+    priorEncumbrances: json("prior_encumbrances").notNull(),
     estimatedFairMarketValue: doublePrecision(
       "estimated_fair_market_value"
     ).notNull(),

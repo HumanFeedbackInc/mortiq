@@ -42,8 +42,9 @@ export const FileUpload = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onChange && onChange(newFiles);
+    const updatedFiles = [...files, ...newFiles];
+    setFiles(updatedFiles);
+    onChange && onChange(updatedFiles);
   };
 
   const handleClick = () => {

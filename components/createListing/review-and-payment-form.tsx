@@ -21,7 +21,7 @@ import { useListingForm } from "./ListingFormContext";
 import { useListingUpload } from "@/hooks/useListingUpload";
 // import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { createClient } from "@/utils/supabase/client";
-
+import { ListingData } from "@/hooks/useListingUpload";
 import countries, { type countryProp } from "./countries";
 import states from "./states";
 
@@ -69,51 +69,33 @@ const ReviewAndPaymentForm = React.forwardRef<
     const listingImages = formData.listingImages || [];
 
     try {
-      // Get all broker accounts
-      // const { data: brokers, error: brokersError } = await supabase
-      //   .from("profiles")
-      //   .select("*")
-      //   .eq("role", "broker");
-
-      // if (brokersError) {
-      //   console.error("Error fetching brokers:", brokersError);
-      //   throw brokersError;
-      // }
-
-      // // Call webhook for each broker
-      // for (const broker of brokers) {
-      //   const payload = {
-      //     phoneNumber: broker.phone_number,
-      //     name: broker.full_name,
-      //     listingDetails: {
-      //       loanAmount: formData.loanAmount,
-      //       interestRate: formData.interestRate,
-      //       term: formData.term,
-      //       ltv: formData.ltv,
-      //       location: formData.fullAddressDetails?.formattedAddress,
-      //     },
-      //   };
-
-      //   const response = await fetch(
-      //     "https://api.callfluent.ai/api/call-api/make-call/3403",
-      //     {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //       body: JSON.stringify(payload),
-      //     }
-      //   );
-
-      //   if (!response.ok) {
-      //     console.error(
-      //       `Failed to call webhook for broker ${broker.full_name}`
-      //     );
-      //   }
-      // }
-
+      const listingData: ListingData = {
+        // ...formData,
+        priorEncumbrancesWith: formData.priorEncumbrancesWith || "",
+        fairMarketValue: formData.fairMarketValue || 0,
+        priorEncumbrances: formData.priorEncumbrances || 0,
+        fullAddressDetails: formData.fullAddressDetails,
+        loanAmount: formData.loanAmount || 0,
+        mortgageType: formData.mortgageType || "",
+        interestRate: formData.interestRate || 0,
+        term: formData.term || "",
+        ltv: formData.ltv || 0,
+        firstName: formData.firstName || "",
+        lastName: formData.lastName || "",
+        email: formData.email || "",
+        phoneNumber: formData.phoneNumber || "",
+        entityName: formData.entityName || "",
+        cardholderName: formData.cardholderName || "",
+        country: formData.country || "",
+        zipCode: formData.zipCode || "",
+        state: formData.state || "",
+      };
+      console.log("=========listingData=========");
+      console.log(listingData);
+      console.log("=========formData=========");
+      console.log(formData);
       // Continue with existing upload logic
-      const result = await uploadListing(formData);
+      const result = await uploadListing(listingData);
 
       console.log("Result:", result);
       console.table(result);
