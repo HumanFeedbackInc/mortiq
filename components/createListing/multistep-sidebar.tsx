@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import {Button} from "@heroui/react";
-import {Icon} from "@iconify/react";
-import {cn} from "@heroui/react";
+import { Button } from "@heroui/react";
+import { Icon } from "@iconify/react";
+import { cn } from "@heroui/react";
 
 import SupportCard from "./support-card";
 import VerticalSteps from "./vertical-steps";
@@ -31,11 +31,25 @@ const stepperClasses = cn(
   "dark:[--active-border-color:rgba(255,255,255,0.5)]",
   "dark:[--inactive-border-color:rgba(255,255,255,0.1)]",
   "dark:[--inactive-bar-color:rgba(255,255,255,0.1)]",
-  "dark:[--inactive-color:rgba(255,255,255,0.2)]",
+  "dark:[--inactive-color:rgba(255,255,255,0.2)]"
 );
 
-const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>(
-  ({children, className, currentPage, onBack, onNext, onChangePage, ...props}, ref) => {
+const MultiStepSidebar = React.forwardRef<
+  HTMLDivElement,
+  MultiStepSidebarProps
+>(
+  (
+    {
+      children,
+      className,
+      currentPage,
+      onBack,
+      onNext,
+      onChangePage,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <div
         ref={ref}
@@ -55,10 +69,10 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
           </Button>
           <div>
             <div className="text-xl font-medium leading-7 text-default-foreground">
-              Acme Mailroom
+              Mortgage Intelligence
             </div>
             <div className="mt-1 text-base font-medium leading-6 text-default-500">
-              Get a unique, physical U.S address and virtual mailbox.
+              Create a listing to get started.
             </div>
           </div>
           {/* Desktop Steps */}
@@ -114,11 +128,9 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
             </div>
           </div>
           <div className="h-full w-full p-4 sm:max-w-md md:max-w-lg">
-            <div className="h-full">
-              {children}
-            </div>
+            <div className="h-full">{children}</div>
             <MultistepNavigationButtons
-              backButtonProps={{isDisabled: currentPage === 0}}
+              backButtonProps={{ isDisabled: currentPage === 0 }}
               className="lg:hidden"
               nextButtonProps={{
                 children:
@@ -136,7 +148,7 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
         </div>
       </div>
     );
-  },
+  }
 );
 
 MultiStepSidebar.displayName = "MultiStepSidebar";

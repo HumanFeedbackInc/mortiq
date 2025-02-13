@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 import { useMediaQuery } from "usehooks-ts";
 import { cn } from "@heroui/react";
 // import UserTableWrapper from "../userTableWrapper";
-import { AcmeIcon } from "./acme";
+import { MortgageIQIcon } from "./MortgageIQ";
 import { items } from "./sidebar-items";
 import PendingPropertiesTable from "../pendingProperties/pendingTable";
 
@@ -103,14 +103,14 @@ export default function Component({
           )}
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground">
-            <AcmeIcon className="text-background" />
+            <MortgageIQIcon className="text-background" />
           </div>
           <span
             className={cn("text-small font-bold uppercase opacity-100", {
               "w-0 opacity-0": isCompact,
             })}
           >
-            Acme
+            MortgageIQ
           </span>
         </div>
         <Spacer y={8} />

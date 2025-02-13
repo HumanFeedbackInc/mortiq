@@ -24,7 +24,7 @@ import {
   DropdownItem,
 } from "@heroui/react";
 
-import { AcmeIcon } from "./logo";
+import { MortgageIQIcon } from "./logo";
 import { usePathname } from "next/navigation";
 import { redirect } from "next/navigation";
 
@@ -84,9 +84,9 @@ export default function Component(props: NavbarPropsWithUser) {
         {/* Logo */}
         <NavbarBrand className="mr-2 w-[40vw] md:w-auto md:max-w-fit">
           <div className="rounded-full bg-foreground text-background">
-            <AcmeIcon size={34} />
+            <MortgageIQIcon size={34} />
           </div>
-          <span className="ml-2 font-medium md:hidden">ACME</span>
+          <span className="ml-2 font-medium md:hidden">MortgageIQ</span>
         </NavbarBrand>
 
         {/* Items */}

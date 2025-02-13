@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import {domAnimation, LazyMotion, m} from "framer-motion";
+import { domAnimation, LazyMotion, m } from "framer-motion";
 
 import MultistepSidebar from "./multistep-sidebar";
 import SignUpForm from "./signup-form";
@@ -89,7 +89,7 @@ export default function Component() {
               ease: "backOut",
               duration: 0.35,
             },
-            opacity: {duration: 0.4},
+            opacity: { duration: 0.4 },
           }}
           variants={variants}
         >
@@ -107,13 +107,16 @@ export default function Component() {
         onChangePage={onChangePage}
         onNext={onNext}
       >
-        <div id="form_content" className="relative flex h-fit w-full flex-col pt-6 text-center lg:h-full lg:justify-center lg:pt-0">
+        <div
+          id="form_content"
+          className="relative flex h-fit w-full flex-col pt-6 text-center lg:h-full lg:justify-center lg:pt-0"
+        >
           {content}
           <MultistepNavigationButtons
-            backButtonProps={{isDisabled: page === 0}}
+            backButtonProps={{ isDisabled: page === 0 }}
             className="hidden justify-start lg:flex"
             nextButtonProps={{
-              children: page === 3 ? "Go to Payment" : "Continue",
+              children: page === 3 ? "Go to Review" : "Continue",
             }}
             onBack={onBack}
             onNext={onNext}

@@ -1,14 +1,22 @@
 "use client";
 
 import React from "react";
-import {Avatar, Button, Spacer, Tab, Tabs, Tooltip, useDisclosure} from "@heroui/react";
-import {Icon} from "@iconify/react";
-import {useMediaQuery} from "usehooks-ts";
-import {cn} from "@heroui/react";
+import {
+  Avatar,
+  Button,
+  Spacer,
+  Tab,
+  Tabs,
+  Tooltip,
+  useDisclosure,
+} from "@heroui/react";
+import { Icon } from "@iconify/react";
+import { useMediaQuery } from "usehooks-ts";
+import { cn } from "@heroui/react";
 import { type InferSelectModel } from "drizzle-orm";
 import { account, roles, userRoles } from "@/drizzle/schema";
 
-import {AcmeIcon} from "../components/acme";
+import { MortgageIQIcon } from "../components/MortgageIQ";
 import ProfileSetting from "../components/profile-setting";
 import AppearanceSetting from "../components/appearance-setting";
 import AccountSetting from "../components/account-setting";
@@ -19,12 +27,12 @@ import Sidebar from "../components/sidebar";
 
 import { UserData } from "./account-setting";
 import { PendingUserData } from "./account-setting";
-import {items} from "../components/items";
+import { items } from "../components/items";
 import { User } from "@supabase/supabase-js";
 import { DashboardUserData } from "../page";
 import DocumentsSetting from "../components/documents-setting";
 
-// import { UserAccountData } from 
+// import { UserAccountData } from
 
 // Define the joined type from getUserAccountData
 
@@ -49,11 +57,11 @@ import DocumentsSetting from "../components/documents-setting";
  * ```
  */
 export default function DashboardWrapper({
-  dashboardUserData, 
+  dashboardUserData,
 }: {
   dashboardUserData: DashboardUserData;
 }) {
-  const {isOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpenChange } = useDisclosure();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -65,7 +73,9 @@ export default function DashboardWrapper({
     <div className="flex h-dvh w-full gap-4">
       {/* Sidebar */}
       <SidebarDrawer
-        className={cn("min-w-[288px] rounded-lg", {"min-w-[76px]": isCollapsed})}
+        className={cn("min-w-[288px] rounded-lg", {
+          "min-w-[76px]": isCollapsed,
+        })}
         hideCloseButton={true}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -75,7 +85,7 @@ export default function DashboardWrapper({
             "will-change relative flex h-full w-72 flex-col bg-default-100 p-6 transition-width",
             {
               "w-[83px] items-center px-[6px] py-6": isCollapsed,
-            },
+            }
           )}
         >
           <div
@@ -84,16 +94,19 @@ export default function DashboardWrapper({
             })}
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground">
-              <AcmeIcon className="text-background" />
+              <MortgageIQIcon className="text-background" />
             </div>
             <span
-              className={cn("w-full text-small font-bold uppercase opacity-100", {
-                "w-0 opacity-0": isCollapsed,
-              })}
+              className={cn(
+                "w-full text-small font-bold uppercase opacity-100",
+                {
+                  "w-0 opacity-0": isCollapsed,
+                }
+              )}
             >
-              Acme
+              MortgageIQ
             </span>
-            <div className={cn("flex-end flex", {hidden: isCollapsed})}>
+            <div className={cn("flex-end flex", { hidden: isCollapsed })}>
               <Icon
                 className="cursor-pointer dark:text-primary-foreground/60 [&>g]:stroke-[1px]"
                 icon="solar:round-alt-arrow-left-line-duotone"
@@ -109,9 +122,18 @@ export default function DashboardWrapper({
               size="sm"
               src={dashboardUserData.userData?.profilePicture || ""}
             />
-            <div className={cn("flex max-w-full flex-col", {hidden: isCollapsed})}>
-              <p className="text-small font-medium text-foreground">{dashboardUserData.userData?.firstName} {dashboardUserData.userData?.lastName}</p>
-              <p className="text-tiny font-medium text-default-400">{dashboardUserData.userData?.role}</p>
+            <div
+              className={cn("flex max-w-full flex-col", {
+                hidden: isCollapsed,
+              })}
+            >
+              <p className="text-small font-medium text-foreground">
+                {dashboardUserData.userData?.firstName}{" "}
+                {dashboardUserData.userData?.lastName}
+              </p>
+              <p className="text-tiny font-medium text-default-400">
+                {dashboardUserData.userData?.role}
+              </p>
             </div>
           </div>
 
@@ -151,14 +173,18 @@ export default function DashboardWrapper({
                 />
               </Button>
             )}
-            <Tooltip content="Support" isDisabled={!isCollapsed} placement="right">
+            <Tooltip
+              content="Support"
+              isDisabled={!isCollapsed}
+              placement="right"
+            >
               <Button
                 fullWidth
                 className={cn(
                   "justify-start truncate text-default-600 data-[hover=true]:text-foreground",
                   {
                     "justify-center": isCollapsed,
-                  },
+                  }
                 )}
                 isIconOnly={isCollapsed}
                 startContent={
@@ -183,11 +209,18 @@ export default function DashboardWrapper({
                 )}
               </Button>
             </Tooltip>
-            <Tooltip content="Log Out" isDisabled={!isCollapsed} placement="right">
+            <Tooltip
+              content="Log Out"
+              isDisabled={!isCollapsed}
+              placement="right"
+            >
               <Button
-                className={cn("justify-start text-default-500 data-[hover=true]:text-foreground", {
-                  "justify-center": isCollapsed,
-                })}
+                className={cn(
+                  "justify-start text-default-500 data-[hover=true]:text-foreground",
+                  {
+                    "justify-center": isCollapsed,
+                  }
+                )}
                 isIconOnly={isCollapsed}
                 startContent={
                   isCollapsed ? null : (
@@ -235,7 +268,9 @@ export default function DashboardWrapper({
               width={20}
             />
           </Button>
-          <h1 className="text-3xl font-bold leading-9 text-default-foreground">Settings</h1>
+          <h1 className="text-3xl font-bold leading-9 text-default-foreground">
+            Settings
+          </h1>
         </div>
         <h2 className="mt-2 text-small text-default-500">
           Customize settings, email preferences, and web appearance.
@@ -250,16 +285,16 @@ export default function DashboardWrapper({
           }}
         >
           <Tab key="profile" title="Profile">
-            <ProfileSetting dashboardUserData={dashboardUserData}/>
+            <ProfileSetting dashboardUserData={dashboardUserData} />
           </Tab>
           <Tab key="appearance" title="Appearance">
             <AppearanceSetting />
           </Tab>
           <Tab key="account" title="Account">
-            <AccountSetting dashboardUserData={dashboardUserData}/>
+            <AccountSetting dashboardUserData={dashboardUserData} />
           </Tab>
           <Tab key="documents" title="Documents">
-            <DocumentsSetting dashboardUserData={dashboardUserData}/>
+            <DocumentsSetting dashboardUserData={dashboardUserData} />
           </Tab>
           <Tab key="billing" title="Billing">
             <BillingSetting />

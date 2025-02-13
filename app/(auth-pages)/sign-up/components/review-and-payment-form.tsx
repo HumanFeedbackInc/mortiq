@@ -217,7 +217,7 @@ const ReviewAndPaymentForm = React.forwardRef<
           className="col-span-12"
           label="Email Address"
           name="email"
-          placeholder="john.doe@acme.com"
+          placeholder="john.doe@MortgageIQ.com"
           type="email"
           value={formData.email}
           onChange={(e) => updateFormData({ email: e.target.value })}

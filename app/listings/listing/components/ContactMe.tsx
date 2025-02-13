@@ -4,7 +4,7 @@ import React from "react";
 import { Button, Input, Checkbox, Link, Divider, Form } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
-import { AcmeIcon } from "@/components/ui/logo";
+import { MortgageIQIcon } from "@/components/ui/logo";
 
 export default function ContactMe(props: {
   address: string;
@@ -118,7 +118,7 @@ export default function ContactMe(props: {
         </Form>
       </div>
       <div className="flex flex-col items-center p-6">
-        <AcmeIcon size={60} />
+        <MortgageIQIcon size={60} />
         <p className="text-xl font-medium">Contact Me Now</p>
         <p className="text-small text-default-500">
           We'll call within 5 minutes

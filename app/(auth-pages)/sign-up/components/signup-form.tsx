@@ -46,7 +46,7 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
     return (
       <>
         <div className="text-3xl font-bold leading-9 text-default-foreground">
-          Welcome to Acme 👋
+          Welcome to MortgageIQ 👋
         </div>
         <div className="py-2 text-medium text-default-500">
           Already have an account?

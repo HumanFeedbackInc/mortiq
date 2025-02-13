@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import {Avatar, Button, ScrollShadow, Spacer, Tooltip} from "@heroui/react";
-import {Icon} from "@iconify/react";
-import {useMediaQuery} from "usehooks-ts";
-import {cn} from "@heroui/react";
+import { Avatar, Button, ScrollShadow, Spacer, Tooltip } from "@heroui/react";
+import { Icon } from "@iconify/react";
+import { useMediaQuery } from "usehooks-ts";
+import { cn } from "@heroui/react";
 
-import {AcmeIcon} from "./acme";
-import {sectionItemsWithTeams} from "./sidebar-items";
+import { MortgageIQIcon } from "./MortgageIQ";
+import { sectionItemsWithTeams } from "./sidebar-items";
 
 import Sidebar from "./sidebar";
 
@@ -46,7 +46,7 @@ export default function Component() {
           "relative flex h-full w-72 flex-col !border-r-small border-divider p-6 transition-width",
           {
             "w-16 items-center px-2 py-6": isCompact,
-          },
+          }
         )}
       >
         <div
@@ -55,18 +55,18 @@ export default function Component() {
 
             {
               "justify-center gap-0": isCompact,
-            },
+            }
           )}
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground">
-            <AcmeIcon className="text-background" />
+            <MortgageIQIcon className="text-background" />
           </div>
           <span
             className={cn("text-small font-bold uppercase opacity-100", {
               "w-0 opacity-0": isCompact,
             })}
           >
-            Acme
+            MortgageIQ
           </span>
         </div>
         <Spacer y={8} />
@@ -77,13 +77,23 @@ export default function Component() {
             size="sm"
             src="https://i.pravatar.cc/150?u=a04258114e29026708c"
           />
-          <div className={cn("flex max-w-full flex-col", {hidden: isCompact})}>
-            <p className="truncate text-small font-medium text-default-600">John Doe</p>
-            <p className="truncate text-tiny text-default-400">Product Designer</p>
+          <div
+            className={cn("flex max-w-full flex-col", { hidden: isCompact })}
+          >
+            <p className="truncate text-small font-medium text-default-600">
+              John Doe
+            </p>
+            <p className="truncate text-tiny text-default-400">
+              Product Designer
+            </p>
           </div>
         </div>
         <ScrollShadow className="-mr-6 h-full max-h-full py-6 pr-6">
-          <Sidebar defaultSelectedKey="home" isCompact={isCompact} items={sectionItemsWithTeams} />
+          <Sidebar
+            defaultSelectedKey="home"
+            isCompact={isCompact}
+            items={sectionItemsWithTeams}
+          />
         </ScrollShadow>
         <Spacer y={2} />
         <div
@@ -91,14 +101,18 @@ export default function Component() {
             "items-center": isCompact,
           })}
         >
-          <Tooltip content="Help & Feedback" isDisabled={!isCompact} placement="right">
+          <Tooltip
+            content="Help & Feedback"
+            isDisabled={!isCompact}
+            placement="right"
+          >
             <Button
               fullWidth
               className={cn(
                 "justify-start truncate text-default-500 data-[hover=true]:text-foreground",
                 {
                   "justify-center": isCompact,
-                },
+                }
               )}
               isIconOnly={isCompact}
               startContent={
@@ -125,9 +139,12 @@ export default function Component() {
           </Tooltip>
           <Tooltip content="Log Out" isDisabled={!isCompact} placement="right">
             <Button
-              className={cn("justify-start text-default-500 data-[hover=true]:text-foreground", {
-                "justify-center": isCompact,
-              })}
+              className={cn(
+                "justify-start text-default-500 data-[hover=true]:text-foreground",
+                {
+                  "justify-center": isCompact,
+                }
+              )}
               isIconOnly={isCompact}
               startContent={
                 isCompact ? null : (

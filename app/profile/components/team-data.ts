@@ -1,10 +1,10 @@
-import {isEqual, uniqWith} from "lodash";
+import { isEqual, uniqWith } from "lodash";
 
 const columns = [
-  {name: "NAME", uid: "name", sortable: true},
-  {name: "ROLE", uid: "role", sortable: true},
-  {name: "STATUS", uid: "status", sortable: true},
-  {name: "ACTIONS", uid: "actions"},
+  { name: "NAME", uid: "name", sortable: true },
+  { name: "ROLE", uid: "role", sortable: true },
+  { name: "STATUS", uid: "status", sortable: true },
+  { name: "ACTIONS", uid: "actions" },
 ];
 
 const users = [
@@ -16,7 +16,7 @@ const users = [
     status: "active",
     age: "29",
     avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    email: "tony.reichert@acme.com",
+    email: "tony.reichert@MortgageIQ.com",
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const users = [
     status: "pending",
     age: "25",
     avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-    email: "zoey.lang@acme.com",
+    email: "zoey.lang@MortgageIQ.com",
   },
 ];
 
@@ -43,7 +43,7 @@ const rolesOptions = uniqWith(
       uid: user.role.toLowerCase(),
     };
   }),
-  isEqual,
+  isEqual
 );
 
 /**
@@ -59,7 +59,7 @@ const statusOptions = uniqWith(
       uid: user.status.toLowerCase(),
     };
   }),
-  isEqual,
+  isEqual
 );
 
-export {columns, users, rolesOptions, statusOptions};
+export { columns, users, rolesOptions, statusOptions };
