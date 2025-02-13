@@ -18,7 +18,7 @@ import {
 import { Icon } from "@iconify/react";
 import { cn } from "@heroui/react";
 import { useListingForm } from "./ListingFormContext";
-import { useListingUpload } from "@/hooks/useListingUpload";
+import { ListingData, useListingUpload } from "@/hooks/useListingUpload";
 import { ListingFormData } from "./ListingFormContext";
 import countries, { type countryProp } from "./countries";
 import states from "./states";
@@ -64,14 +64,37 @@ const ReviewAndPaymentForm = React.forwardRef<
     e.preventDefault();
     if (!formData.loanAmount) return;
 
-    const listingData: ListingFormData = {
-      ...formData,
+    const listingData: ListingData = {
+      priorEncumbrances: formData.priorEncumbrances || 0,
+      priorEncumbrancesWith: formData.priorEncumbrancesWith || "",
+      fairMarketValue: formData.fairMarketValue || 0,
       loanAmount: formData.loanAmount,
       mortgageType: formData.mortgageType || "",
       interestRate: formData.interestRate || 0,
       term: formData.term || "",
       ltv: formData.ltv || 0,
-    } as ListingFormData;
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
+      phoneNumber: formData.phoneNumber || "",
+      entityName: formData.entityName || "",
+      cardholderName: formData.cardholderName || "",
+      country: formData.country || "",
+      zipCode: formData.zipCode || "",
+      state: formData.state || "",
+      propertyType: formData.propertyType || "",
+      propertyAddress: formData.propertyAddress || "",
+      propertyCity: formData.propertyCity || "",
+      propertyProvince: formData.propertyProvince || "",
+      propertyPostalCode: formData.propertyPostalCode || "",
+      propertyCountry: formData.propertyCountry || "",
+      propertyLatitude: formData.propertyLatitude || 0,
+      propertyLongitude: formData.propertyLongitude || 0,
+      squareMeters: formData.squareMeters || 0,
+      numberOfUnits: formData.numberOfUnits || 0,
+      propertyDescription: formData.propertyDescription || "",
+      fullAddressDetails: formData.fullAddressDetails || "",
+    } as ListingData;
 
     const result = await uploadListing(
       listingData
