@@ -67,19 +67,54 @@ const ReviewAndPaymentForm = React.forwardRef<
     e.preventDefault();
     const listingDocuments = formData.listingDocuments || [];
     const listingImages = formData.listingImages || [];
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-    console.log("User role:", user?.role);
-    console.table(user);
+
     try {
-      // Upload documents
-      const result = await uploadListing(
-        formData
-        // [], // Pass empty arrays since files are already uploaded
-        // []
-      );
+      // Get all broker accounts
+      // const { data: brokers, error: brokersError } = await supabase
+      //   .from("profiles")
+      //   .select("*")
+      //   .eq("role", "broker");
+
+      // if (brokersError) {
+      //   console.error("Error fetching brokers:", brokersError);
+      //   throw brokersError;
+      // }
+
+      // // Call webhook for each broker
+      // for (const broker of brokers) {
+      //   const payload = {
+      //     phoneNumber: broker.phone_number,
+      //     name: broker.full_name,
+      //     listingDetails: {
+      //       loanAmount: formData.loanAmount,
+      //       interestRate: formData.interestRate,
+      //       term: formData.term,
+      //       ltv: formData.ltv,
+      //       location: formData.fullAddressDetails?.formattedAddress,
+      //     },
+      //   };
+
+      //   const response = await fetch(
+      //     "https://api.callfluent.ai/api/call-api/make-call/3403",
+      //     {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //       body: JSON.stringify(payload),
+      //     }
+      //   );
+
+      //   if (!response.ok) {
+      //     console.error(
+      //       `Failed to call webhook for broker ${broker.full_name}`
+      //     );
+      //   }
+      // }
+
+      // Continue with existing upload logic
+      const result = await uploadListing(formData);
+
       console.log("Result:", result);
       console.table(result);
       const documentUploads = await Promise.all(
@@ -131,8 +166,8 @@ const ReviewAndPaymentForm = React.forwardRef<
         // Handle error (e.g., show error message to user)
       }
     } catch (error) {
-      console.error("Error uploading files:", error);
-      // Handle error (e.g., show error message to user)
+      console.error("Error in submission:", error);
+      // Handle error
     }
   };
 

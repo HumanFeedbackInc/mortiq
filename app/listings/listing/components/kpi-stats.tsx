@@ -14,9 +14,9 @@ type KpiStatsProps = {
 
 export function KpiStats({ stats }: KpiStatsProps) {
   return (
-    <section className="group/container relative mx-auto h-[300px] w-full max-w-7xl overflow-hidden">
+    <section className="group/container relative mx-auto min-h-[300px] w-full max-w-7xl overflow-hidden mb-10">
       <div className="relative z-20 h-full">
-        <div className="align-center mx-auto mt-8 grid h-full max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2">
+        <div className="align-center justify-center items-center mx-auto mt-8 grid h-full max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2">
           {stats.map((item, index) => (
             <motion.div
               initial={{
@@ -36,12 +36,12 @@ export function KpiStats({ stats }: KpiStatsProps) {
               key={"card" + index}
               className={cn("group/card relative overflow-hidden rounded-lg")}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center md:justify-start md:items-start gap-2">
                 <p className="text-3xl font-bold text-neutral-700 dark:text-neutral-200">
                   <AnimatedNumber value={item.value} />
                 </p>
               </div>
-              <p className="text-balance text-balance mt-4 text-base text-neutral-600 dark:text-neutral-300">
+              <p className="text-balance text-balance text-center md:text-left mt-4 text-base text-neutral-600 dark:text-neutral-300">
                 {item.description}
               </p>
             </motion.div>
@@ -64,7 +64,7 @@ function AnimatedNumber({
 
   const spring = useSpring(initial, { mass: 0.8, stiffness: 75, damping: 15 });
   const display = useTransform(spring, (current) =>
-    Math.round(current).toLocaleString(),
+    Math.round(current).toLocaleString()
   );
 
   useEffect(() => {

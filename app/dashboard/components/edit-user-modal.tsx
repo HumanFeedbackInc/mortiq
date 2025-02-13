@@ -39,6 +39,8 @@ export default function EditUserModal({
       userId: user.user_id,
       // Add other fields as needed
     };
+    console.log("updatedUser from modal");
+    console.log(updatedUser);
 
     onSave(updatedUser);
   };
@@ -66,6 +68,12 @@ export default function EditUserModal({
                 label="Email"
                 name="email"
                 defaultValue={user?.email}
+                variant="bordered"
+              />
+              <Input
+                label="Phone Number"
+                name="phoneNumber"
+                defaultValue={user?.phone}
                 variant="bordered"
               />
               <Select

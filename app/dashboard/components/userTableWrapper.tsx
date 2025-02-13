@@ -70,27 +70,29 @@ export default function UserTableWrapper({
       lastName: updatedUser.lastName,
       role: updatedUser.role,
     };
+    console.log("pendingUserData");
+    console.log(pendingUserData);
     await UpdateExistingUser(pendingUserData);
 
     // Map the updated user data to match the table's UserAccountTableType format
-    setTableUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.user_id === updatedUser.userId
-          ? {
-              ...user,
-              first_name: updatedUser.firstName,
-              last_name: updatedUser.lastName,
-              role: updatedUser.role,
-              phone: updatedUser.phoneNumber || user.phone,
-              account_id: user.account_id,
-              email: user.email,
-              profile_picture: user.profile_picture,
-              account_status: user.account_status,
-              created_at: user.created_at,
-            }
-          : user
-      )
-    );
+    // setTableUsers((prevUsers) =>
+    //   prevUsers.map((user) =>
+    //     user.user_id === updatedUser.userId
+    //       ? {
+    //           ...user,
+    //           first_name: updatedUser.firstName,
+    //           last_name: updatedUser.lastName,
+    //           role: updatedUser.role,
+    //           phone: updatedUser.phoneNumber || user.phone,
+    //           account_id: user.account_id,
+    //           email: user.email,
+    //           profile_picture: user.profile_picture,
+    //           account_status: user.account_status,
+    //           created_at: user.created_at,
+    //         }
+    //       : user
+    //   )
+    // );
 
     onOpenChange();
   };

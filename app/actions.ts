@@ -23,6 +23,7 @@ import {
   PendingUserData,
   UserData,
 } from "./profile/components/account-setting";
+import { time } from "console";
 
 interface ListingData {
   // Loan Details
@@ -71,6 +72,89 @@ interface ListingData {
     formattedAddress?: string;
   };
 }
+
+export const triggerAiCall = async (
+  listingId: string,
+  activeListingId: string
+) => {
+  // const supabase = await createClient();
+  const res = await db
+    .select()
+    .from(listings)
+    .where(eq(listings.listingId, listingId))
+    .innerJoin(property, eq(listings.propertyId, property.propertyId));
+  console.log("============res==================");
+  console.log(res);
+  //get every account with role of investor
+  const investors = await db
+    //get names, emails and phone numbers of investors
+    .select()
+    .from(account)
+    .innerJoin(users, eq(account.userId, users.id))
+    .innerJoin(userRoles, eq(account.userId, userRoles.userId))
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .where(eq(roles.roleName, "INVESTOR"));
+
+  //get the first investor
+  // const investor = investors[j;
+  console.log("============investors==================");
+  console.log(investors);
+
+  const promises = [];
+  for (let i = 0; i < investors.length; i++) {
+    console.log("============investor==================");
+    console.log(investors[i]);
+    console.log("============end==================");
+    console.log("============res==================");
+    console.log(res[0]);
+    console.log("============end==================");
+    const investor = investors[i];
+    const payload = {
+      name: `${investor.account.firstName}`,
+      phone_number: investor.account.phone,
+      property_listing_id: activeListingId,
+      address: res[0].property.address,
+      amount: res[0].property.amount,
+      interest_rate: res[0].property.interestRate,
+      ltv: res[0].property.ltv,
+      prior_encumbrances: res[0].property.priorEncumbrances,
+      term: res[0].property.term,
+      mortgage_type: res[0].property.mortgageType,
+    };
+
+    console.log("Payload prepared:", payload);
+    //wait for 10 seconds
+    //get random number between 1 and 10
+    // const randomNumber = Math.floor(Math.random() * 10);
+    // console.log("randomNumber");
+    // console.log(randomNumber);
+    // await new Promise((resolve) => setTimeout(resolve, randomNumber * 1000));
+    promises.push(
+      fetch("https://api.callfluent.ai/api/call-api/make-call/3403", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+    );
+    //await all promises
+    await Promise.all(promises);
+    // const response = await fetch(
+    //   "https://api.callfluent.ai/api/call-api/make-call/3403",
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(payload),
+    //   }
+    // );
+
+    console.log("investors");
+    console.log(investors);
+  }
+};
 
 export const getAllListingFilesFromFolder = async (folderPath: string) => {
   //check auth status
@@ -580,13 +664,22 @@ export const getListings = async () => {
   return updatedListings;
 };
 
-export const approveListing = async (listingId: string) => {
-  //insert listingid into the approved_listings table
+export const approveListing = async (
+  listingId: string,
+  triggerAiCall_: boolean = false
+) => {
   const res = await db
     .insert(activeListings)
     .values({ listingId, listingDateActive: new Date().toISOString() })
+    .returning()
     .execute();
-  return res;
+
+  if (triggerAiCall_) {
+    await triggerAiCall(listingId, listingId);
+  }
+
+  // Return the first (and only) inserted row
+  return res[0];
 };
 
 export const getPendingProperties = async () => {
@@ -810,11 +903,13 @@ export type UpdateExistingUserType = {
   phoneNumber: string;
   userId: string;
 };
+
 export const UpdateExistingUser = async (userData: UpdateExistingUserType) => {
   // Add detailed logging
   console.log("UpdateUser received userData:", {
     firstName: userData.firstName,
     lastName: userData.lastName,
+    role: userData.role,
     phoneNumber: userData.phoneNumber, // Check if this is null
     // phone: userData.phone, // Check if this exists
     userId: userData.userId,
@@ -826,21 +921,27 @@ export const UpdateExistingUser = async (userData: UpdateExistingUserType) => {
       .set({
         firstName: userData.firstName,
         lastName: userData.lastName,
-        phone: userData.phoneNumber || "", // Add fallback empty string if null
+        phone: userData.phoneNumber, // Add fallback empty string if null
       })
       .where(eq(account.userId, userData.userId))
       .returning();
+
+    console.log("result");
+    console.log(result);
     //update the user_roles table
     const userRolesPayload = {
       userId: userData.userId,
       roleId: userData.role,
     };
+    console.log("userRolesPayload");
+    console.log(userRolesPayload);
     //delete existing user_roles for the user
     const userRolesDeleteRes = await db
       .delete(userRoles)
       .where(eq(userRoles.userId, userData.userId))
       .execute();
-
+    console.log("userRolesDeleteRes");
+    console.log(userRolesDeleteRes);
     //get correct role id from roles table
     const roleId = await db
       .select({ id: roles.id })
@@ -855,7 +956,8 @@ export const UpdateExistingUser = async (userData: UpdateExistingUserType) => {
         roleId: roleId[0].id,
       })
       .execute();
-
+    console.log("userRolesRes");
+    console.log(userRolesRes);
     console.log("Update result:", result);
     return { success: true, data: result[0] };
   } catch (error) {
@@ -999,6 +1101,8 @@ export const approvePendingUser = async (pendingUserData: PendingUserData) => {
   //   })
   //   .select("*")
   //   .single();
+  console.log("pendingUserData");
+  console.log(pendingUserData);
   const accountPayload = {
     userId: pendingUserData.userId,
     firstName: pendingUserData.firstName,
@@ -1008,6 +1112,8 @@ export const approvePendingUser = async (pendingUserData: PendingUserData) => {
     accountStatus: "ACTIVE",
     profilePicture: pendingUserData.profilePicture,
   };
+  console.log("accountPayload");
+  console.log(accountPayload);
 
   //insert into user_roles table
   const userRolesPayload = {
@@ -1030,7 +1136,7 @@ export const approvePendingUser = async (pendingUserData: PendingUserData) => {
       profilePicture: accountPayload.profilePicture,
     })
     .execute();
-  console.log("res");
+  console.log("account inserted into account table res:");
   console.log(res);
   //remove from pending_user table
   const { data: pendingUserDataDelete, error: pendingUserDataDeleteError } =
@@ -1038,7 +1144,8 @@ export const approvePendingUser = async (pendingUserData: PendingUserData) => {
       .from("pending_user")
       .delete()
       .eq("user_id", pendingUserData.userId);
-
+  console.log("pendingUserDataDelete");
+  console.log(pendingUserDataDelete);
   if (pendingUserDataDeleteError) {
     console.error(pendingUserDataDeleteError);
     return { success: false, error: pendingUserDataDeleteError.message };

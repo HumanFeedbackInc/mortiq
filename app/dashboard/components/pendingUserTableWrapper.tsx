@@ -40,6 +40,7 @@ export default function PendingUserTableWrapper({
             // accountStatus: user.account_status,
             // createdAt: user.created_at,
           };
+
           approvePendingUser(pendingUserData);
         }
       },

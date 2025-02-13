@@ -14,10 +14,10 @@ import AppScreenshot from "@/components/hero/app-screenshot";
 import FadeInImage from "@/components/hero/fade-in-image";
 import demoimg from "../public/demoimg.png";
 import Image from "next/image";
-
+import { Testimonials } from "@/components/testimonials";
 export default function Component() {
   return (
-    <div className="relative flex h-screen min-h-dvh w-full flex-col  bg-background">
+    <div className="relative flex h-screen min-h-dvh max-w-screen w-full flex-col bg-background">
       {/* <BasicNavbar /> */}
       <main className="flex flex-col items-center rounded-2xl px-3 md:rounded-3xl md:px-0">
         <section className="z-20 my-14 flex flex-col items-center justify-center gap-[18px] sm:gap-6">
@@ -74,14 +74,19 @@ export default function Component() {
           {/* <AppScreenshot /> */}
           <Image src={demoimg} alt="demoimg" height={1000} width={1500} />
         </div>
+        <div>
+          <Testimonials />
+        </div>
       </main>
-      <div className="pointer-events-none inset-0 top-[-25%] z-10 scale-150 select-none sm:absolute sm:scale-125">
-        <FadeInImage
-          fill
-          priority
-          alt="Gradient background"
-          src="https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/backgrounds/bg-gradient.png"
-        />
+      <div className="pointer-events-none absolute inset-0 top-[-25%] z-10 overflow-hidden select-none">
+        <div className="w-full h-full scale-150 sm:scale-125">
+          <FadeInImage
+            fill
+            priority
+            alt="Gradient background"
+            src="https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/backgrounds/bg-gradient.png"
+          />
+        </div>
       </div>
     </div>
   );

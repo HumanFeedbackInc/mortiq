@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['images.unsplash.com', "assets.aceternity.com","nextuipro.nyc3.cdn.digitaloceanspaces.com", "tvwojwmrfzfxpelinlal.supabase.co"],
+        domains: ['images.unsplash.com', "i.pravatar.cc","assets.aceternity.com","nextuipro.nyc3.cdn.digitaloceanspaces.com", "tvwojwmrfzfxpelinlal.supabase.co"],
     },
     experimental: {
         serverActions: {

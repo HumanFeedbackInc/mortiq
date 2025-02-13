@@ -10,6 +10,7 @@ import {
   CircleDollarSign,
   House,
   CalendarDays,
+  PlusIcon,
 } from "lucide-react";
 import {
   Dropdown,
@@ -44,7 +45,9 @@ import { useMemoizedCallback } from "./use-memoized-callback";
 import { useListingTable } from "./useListingTable";
 // import {columns} from "./data";
 import { RangeSlider } from "./amount-slider";
-import { approveListing } from "@/app/actions";
+import { approveListing, triggerAiCall } from "@/app/actions";
+import { useRouter } from "next/navigation";
+
 type ListingTableProps = {
   listings: {
     listingDateActive: string;
@@ -150,6 +153,7 @@ export default function Component({
     onClick: handleMemberClick,
   }));
 
+  const router = useRouter();
   const handleSelectedAction = useMemoizedCallback(async (action: string) => {
     const selectedRows =
       filterSelectedKeys === "all"
@@ -166,9 +170,12 @@ export default function Component({
         console.log("Row:", row);
         //TODO: Call approveListing function
         // await approveListing(row.listingId);
-        promises.push(approveListing(row.listingId));
+
+        // promises.push(approveListing(row.listingId));
+        console.log("Triggering AI call for listing:", row.listingId);
+        promises.push(triggerAiCall(row.listingId, row.listingId));
       }
-      await Promise.all(promises);
+      // const results = await Promise.all(promises);
       console.log("All listings approved");
     } else if (action === "reject") {
       console.log("Rejecting selected rows:", selectedRows);
@@ -592,6 +599,15 @@ export default function Component({
             {listings.length}
           </Chip>
         </div>
+        <Button
+          onPress={() => router.push("/broker/dashboard/newlisting")}
+          color="primary"
+          isIconOnly
+          className="w-10 h-10"
+        >
+          {/* <Icon icon="solar:plus-linear" width={20} /> */}
+          <PlusIcon className="w-5 h-5" />
+        </Button>
       </div>
     );
   }, []);

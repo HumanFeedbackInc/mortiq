@@ -60,7 +60,7 @@ const ProductListItem = React.forwardRef<HTMLDivElement, ProductListItemProps>(
       <div
         ref={ref}
         className={cn(
-          "relative flex w-64 max-w-full flex-none scroll-ml-6 flex-col gap-3 rounded-large bg-content1 p-4 shadow-medium",
+          "relative flex w-80 max-w-full flex-none scroll-ml-6 flex-col gap-3 rounded-large bg-content1 p-4 shadow-medium",
           {
             "rounded-none bg-transparent shadow-none": removeWrapper,
           },
@@ -178,6 +178,9 @@ const ProductListItem = React.forwardRef<HTMLDivElement, ProductListItemProps>(
                 color="primary"
                 radius="lg"
                 variant={isPopular ? "flat" : "solid"}
+                onPress={() => {
+                  router.push(`/listings/listing?id=${listingId}`);
+                }}
               >
                 View Listing
               </Button>

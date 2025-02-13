@@ -67,8 +67,40 @@ export default async function ListingPage({
       "https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages//house2.png",
       "https://tvwojwmrfzfxpelinlal.supabase.co/storage/v1/object/public/propertyImages//interiour1.png",
     ];
+    const imageBucketPath = `listings/${propertyId}/images/`;
 
-    listingImages.forEach((image, index) => {
+    const supabase = await createClient();
+    //Get image urls from supabase storage
+    const { data: imgUrls } = await supabase.storage
+      .from("propertyImages")
+      .list(imageBucketPath);
+
+    console.log(
+      "==================DEBUG: IMG Names ================== \n",
+      imgUrls
+    );
+    //Get public urls for each image
+    const publicImgUrls = imgUrls?.map((img) => {
+      const {
+        data: { publicUrl },
+      } = supabase.storage
+        .from("propertyImages")
+        .getPublicUrl(imageBucketPath + img.name);
+      return publicUrl;
+    });
+
+    console.log(
+      "==================DEBUG: IMG URLs ================== \n",
+      publicImgUrls
+    );
+
+    const imageDisplayUrls = publicImgUrls || listingImages;
+    // const imgUrls = res[0].property. || listingImages
+    console.log(
+      "==================DEBUG: IMG Display URLs ================== \n",
+      imageDisplayUrls
+    );
+    imageDisplayUrls.forEach((image, index) => {
       img_cards.push({
         id: index,
         content: (
@@ -78,11 +110,15 @@ export default async function ListingPage({
         thumbnail: image,
       });
     });
+    console.log(
+      "==================DEBUG: IMG CARDS ================== \n",
+      img_cards
+    );
 
     // Swap images 2 and 3
-    const tempC = img_cards[1];
-    img_cards[1] = img_cards[2];
-    img_cards[2] = tempC;
+    // const tempC = img_cards[1];
+    // img_cards[1] = img_cards[2];
+    // img_cards[2] = tempC;
 
     const latlng = [
       parseFloat(listing?.lat_long?.split(",")[1] || "0"),
@@ -93,7 +129,7 @@ export default async function ListingPage({
 
     return (
       <ListingLayout>
-        <div className="min-h-screen px-6 pb-6 overflow-x-hidden">
+        <div className="min-h-screen md:px-6 pb-6 overflow-x-hidden">
           <h1 className="text-2xl font-bold mb-4">Property Details</h1>
           <h2 className="text-lg font-semibold">Address</h2>
           <p>{listing.address}</p>
@@ -180,7 +216,7 @@ export default async function ListingPage({
             </div>
           </div>
 
-          <div className="min-h-[600px]">
+          <div className="min-h-[500px] flex flex-col items-center justify-center px-2">
             <PDFViewer filePath={`listings/${propertyId}/documents/`} />
           </div>
 

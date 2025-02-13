@@ -32,13 +32,11 @@ import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 
 const menuItems = [
-  "About",
+  "Home",
+  "Listings",
+  "Dashboard",
   "Blog",
-  "Customers",
-  "Pricing",
-  "Enterprise",
-  "Changelog",
-  "Documentation",
+  "About",
   "Contact Us",
 ];
 
@@ -118,12 +116,9 @@ export default function Component(props: NavbarPropsWithUser) {
             About Us
           </Link>
         </NavbarItem>
-        <NavbarItem
-          isActive={pathname === "/integrations"}
-          className="hidden md:flex"
-        >
+        <NavbarItem isActive={pathname === "/blog"} className="hidden md:flex">
           <Link className="text-default-500" href="/integrations" size="sm">
-            Integrations
+            Blog
           </Link>
         </NavbarItem>
         <NavbarItem className="ml-2 !flex">
@@ -170,7 +165,11 @@ export default function Component(props: NavbarPropsWithUser) {
       >
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
-            <Link className="w-full text-default-500" href="#" size="md">
+            <Link
+              className="w-full text-default-500"
+              href={item == "Home" ? "/" : `/${item.toLowerCase()}`}
+              size="md"
+            >
               {item}
             </Link>
           </NavbarMenuItem>
