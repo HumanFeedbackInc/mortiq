@@ -171,9 +171,9 @@ export default function Component({
         //TODO: Call approveListing function
         // await approveListing(row.listingId);
 
-        // promises.push(approveListing(row.listingId));
+        promises.push(approveListing(row.listingId));
         console.log("Triggering AI call for listing:", row.listingId);
-        promises.push(triggerAiCall(row.listingId, row.listingId));
+        // promises.push(triggerAiCall(row.listingId, row.listingId));
       }
       // const results = await Promise.all(promises);
       console.log("All listings approved");
